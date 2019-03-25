@@ -1,0 +1,23 @@
+@import '~@gen3/ui-component/dist/css/base.css';
+
+.user-table {
+  padding: 10px 50px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.user-table__button {
+  margin: 10px 0;
+}
+
+.ReactVirtualized__Table__row {
+  border-top: 2px solid var(--g3-color__silver);
+}
+
+.ReactVirtualized__Table__Grid {
+  border-bottom: 2px solid var(--g3-color__silver);
+}
+
+.ReactVirtualized__Table__headerRow {
+  text-transform: none;
+}
