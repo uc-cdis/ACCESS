@@ -1,8 +1,8 @@
+@import '~@gen3/ui-component/dist/css/base.css';
+
 :root {
-  --gray: #606060;
-  --primary-blue: #05B8EE;
-  --silver: #E7E7E7;
-  --orange: #EF8523;
+  --primary: var(--g3-color__base-blue-light);
+  --highlight: var(--g3-color__highlight-orange);
 }
 
 .app {
@@ -10,4 +10,8 @@
   flex-flow: column;
   justify-content: center;
   align-items: center;
+}
+
+.header {
+  background-color: var(--primary);
 }

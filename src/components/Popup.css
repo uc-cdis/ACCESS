@@ -21,7 +21,7 @@
   margin: auto;
   overflow: hidden;
   border-radius: 8px;
-  border: 1px solid var(--gray);
+  border: 1px solid var(--g3-color__gray);
 }
 
 .popup__title {
@@ -29,7 +29,7 @@
   height: 70px;
   line-height: 70px;
   padding: 0 30px;
-  background: var(--primary-blue);
+  background: var(--primary);
   box-sizing: border-box;
   display: table;
 }

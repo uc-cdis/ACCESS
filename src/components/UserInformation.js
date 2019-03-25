@@ -116,11 +116,11 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='user-info__user-detail'>
-            <label>Access Allowed Data</label>
+            <label>Access Allowed Date</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.accessDate} onChange={this.setAccessDate} />
           </li>
           <li className='user-info__user-detail'>
-            <label>Access Expiration Data</label>
+            <label>Access Expiration Date</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.accessExp} onChange={this.setAccessExp} />
           </li>
         </ul>

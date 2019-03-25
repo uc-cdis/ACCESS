@@ -19,19 +19,19 @@
   margin: 10px 10px 0 10px;
   padding: 10px 10px;
   cursor: pointer;
-  border-top: 2px solid var(--primary-blue);
-  border-left: 2px solid var(--primary-blue);
-  border-right: 2px solid var(--primary-blue);
+  border-top: 2px solid var(--primary);
+  border-left: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
 }
 
 .manage-users__tab:hover {
-  background-color: var(--orange);
+  background-color: var(--highlight);
   color: #fff;
-  border-color: var(--orange);
+  border-color: var(--highlight);
 }
 
 .manage-users__tab--selected {
-  background-color: var(--primary-blue);
+  background-color: var(--primary);
   color: #fff;
 }
 
@@ -40,5 +40,5 @@
   flex-flow: column;
   align-items: flex-start;
   margin: 0 10px 10px 10px;
-  border-top: 2px solid var(--primary-blue);
+  border-top: 2px solid var(--primary);
 }
