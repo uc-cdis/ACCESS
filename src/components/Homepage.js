@@ -13,7 +13,7 @@ class Homepage extends Component {
 
   render() {
     handleLoginCompletion();
-    const images = { kfLogo, dcpLogo };
+    const images = { dcpLogo };
     return (
       <div className='homepage__login'>
         {
