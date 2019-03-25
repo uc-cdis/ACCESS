@@ -1,0 +1,13 @@
+:root {
+  --gray: #606060;
+  --primary-blue: #05B8EE;
+  --silver: #E7E7E7;
+  --orange: #EF8523;
+}
+
+.app {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
