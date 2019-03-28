@@ -2,6 +2,9 @@
 
 .homepage__login {
   display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 20px 20px;
 }
 
 .homepage__login-button {

@@ -1,6 +1,7 @@
 import React from 'react';
 import UserInformation from './UserInformation';
 import UserTable from './UserTable';
+import { userIsLoggedIn } from '../api/login';
 import './ManageUsers.css';
 
 const users = [
@@ -44,7 +45,18 @@ class ManageUsers extends React.Component {
     super(props);
     this.state = {
       selectedTab: 0,
+      loggedIn: null,
     }
+  }
+
+  componentDidMount() {
+    userIsLoggedIn().then((loggedIn) => {
+      if (!loggedIn) {
+        this.props.history.push('/');
+      } else {
+        this.setState({ loggedIn: true });
+      }
+    });
   }
 
   selectTab = tab => {
@@ -52,35 +64,40 @@ class ManageUsers extends React.Component {
   }
 
   render() {
-    console.log('this.state', this.state)
     return (
-      <div className='manage-users'>
-        <div className='manage-users__tab-bar'>
-          <div
-            tab={0}
-            className={'manage-users__tab'.concat(this.state.selectedTab === 0 ? ' manage-users__tab--selected' : '' )}
-            onClick={() => this.selectTab(0)}
-          >
-            Add a New User
-          </div>
-          <div
-            tab={1}
-            className={'manage-users__tab'.concat(this.state.selectedTab === 1 ? ' manage-users__tab--selected' : '' )}
-            onClick={() => this.selectTab(1)}
-          >
-            Manage Current Users
-          </div>
-        </div>
-        <div className='manage-users__content'>
-          {
-            this.state.selectedTab === 0 ? (
-              <UserInformation />
-            ): (
-              <UserTable data={users} />
-            )
-          }
-        </div>
-      </div>
+      <React.Fragment>
+        {
+          this.state.loggedIn ?
+            <div className='manage-users'>
+              <div className='manage-users__tab-bar'>
+                <div
+                  tab={0}
+                  className={'manage-users__tab'.concat(this.state.selectedTab === 0 ? ' manage-users__tab--selected' : '' )}
+                  onClick={() => this.selectTab(0)}
+                >
+                  Add a New User
+                </div>
+                <div
+                  tab={1}
+                  className={'manage-users__tab'.concat(this.state.selectedTab === 1 ? ' manage-users__tab--selected' : '' )}
+                  onClick={() => this.selectTab(1)}
+                >
+                  Manage Current Users
+                </div>
+              </div>
+              <div className='manage-users__content'>
+                {
+                  this.state.selectedTab === 0 ? (
+                    <UserInformation />
+                  ): (
+                    <UserTable data={users} />
+                  )
+                }
+              </div>
+            </div>
+          : null
+        }
+      </React.Fragment>
     )
   }
 }

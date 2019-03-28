@@ -81,7 +81,6 @@ class UserInformation extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <React.Fragment>
         <ul className='user-info__user-details'>

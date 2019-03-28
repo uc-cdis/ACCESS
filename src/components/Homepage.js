@@ -1,40 +1,46 @@
 import React, { Component } from 'react';
-import CommonsLogin from '@gen3/ui-component/dist/components/CommonsLogin';
-import { getToken, loginRedirect, handleLoginCompletion, logout } from '../api/login';
-import { commonsList } from '../config';
-import dcpLogo from '../images/dcp-logo.png';
+import Button from '@gen3/ui-component/dist/components/Button';
+import { loginRedirect, handleLoginCompletion, logout, userIsLoggedIn } from '../api/login';
 import './Homepage.css';
 
 class Homepage extends Component {
-  logout = (commons) => {
-    logout(commons);
+  constructor(props) {
+    super(props);
+    this.state = {
+      loggedIn: null,
+    }
+  }
+
+  componentDidMount() {
+    userIsLoggedIn().then((loggedIn) => {
+      if (loggedIn) {
+        this.props.history.push('/manage');
+      } else {
+        this.setState({ loggedIn: false });
+      }
+    });
+  }
+
+  logout = () => {
+    logout();
     this.forceUpdate();
   }
 
   render() {
-    handleLoginCompletion();
-    const images = { dcpLogo };
     return (
-      <div className='homepage__login'>
+      <React.Fragment>
         {
-          commonsList.map((commons, i) => {
-            const connected = getToken(commons.tokenPath);
-            return (
-              <div className='homepage__login-button' key={i}>
-                <CommonsLogin
-                  logoSrc={images[`${commons.tokenPath}Logo`]}
-                  title={commons.name}
-                  buttonTitle={connected ? 'Disconnect' : 'Connect'}
-                  onButtonClick={connected ? () => this.logout(commons) : () => loginRedirect(commons, window.location.href)}
-                  buttonEnabled={true}
-                  buttonType={connected ? 'primary' : 'secondary'}
-                  message={connected ? 'Connected!' : null}
-                />
-              </div>
-            )
-          })
+          this.state.loggedIn === false ?
+            <div className='homepage__login'>
+              <Button
+                onClick={() => loginRedirect(window.location.href)}
+                buttonType={'primary'}
+                label={'Login'}
+              />
+            </div>
+          : null
         }
-      </div>
+      </React.Fragment>
     );
   }
 }
