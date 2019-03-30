@@ -6,6 +6,9 @@ workflow "Build and Deploy to S3" {
 action "NPM Build" {
   uses = "actions/npm@master"
   secrets = ["REACT_APP_CLIENT"]
+  env = {
+    REDIRECT_URL = "https://access.datastage.io/login"
+  }
   args = "build"
 }
 
@@ -17,5 +20,5 @@ action "Deploy to S3" {
     BUCKET = "access.datastage.io"
   }
   runs = "sh -l -c"
-  args = ["ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art access && mv access/index.html index.html; aws s3 sync --delete . s3://$BUCKET"]
+  args = ["ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art access && mv access/index.html index.html; aws s3 sync . s3://$BUCKET --delete --acl public-read"]
 }

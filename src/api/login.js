@@ -38,7 +38,7 @@ export const getToken = (name) => {
  @param { string } location - the current url location.
  */
 export const loginRedirect = (location) => {
-  const redirectUri = encodeURIComponent(`http://localhost:8000/login`);
+  const redirectUri = encodeURIComponent(config.redirectUrl);
   sessionStorage.setItem('origin', location);
   window.location = `${config.authUrl}?client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}`;
 };
