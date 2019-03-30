@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Button from '@gen3/ui-component/dist/components/Button';
-import { loginRedirect, handleLoginCompletion, logout, userIsLoggedIn } from '../api/login';
+import { loginRedirect, logout, userIsLoggedIn } from '../api/login';
 import './Homepage.css';
 
 class Homepage extends Component {

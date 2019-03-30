@@ -7,9 +7,9 @@ action "NPM Build" {
   uses = "actions/npm@master"
   secrets = ["REACT_APP_CLIENT_ID"]
   env = {
-    REDIRECT_URL = "https://access.datastage.io/login"
+    REACT_APP_REDIRECT_URL = "https://access.datastage.io/login"
   }
-  args = "install && npm run build"
+  args = "ci && npm run build"
 }
 
 action "Deploy to S3" {
