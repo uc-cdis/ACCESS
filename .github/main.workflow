@@ -5,7 +5,7 @@ workflow "Build and Deploy to S3" {
 
 action "NPM Build" {
   uses = "actions/npm@master"
-  secrets = ["REACT_APP_CLIENT"]
+  secrets = ["REACT_APP_CLIENT_ID"]
   env = {
     REDIRECT_URL = "https://access.datastage.io/login"
   }
