@@ -20,5 +20,5 @@ action "Deploy to S3" {
     BUCKET = "access.datastage.io"
   }
   runs = "sh -l -c"
-  args = ["ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art access && mv access/index.html index.html; aws s3 sync . s3://$BUCKET --delete --acl public-read"]
+  args = ["ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read"]
 }
