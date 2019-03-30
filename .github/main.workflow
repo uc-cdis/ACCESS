@@ -9,7 +9,7 @@ action "NPM Build" {
   env = {
     REDIRECT_URL = "https://access.datastage.io/login"
   }
-  args = "run build"
+  args = "install && npm run build"
 }
 
 action "Deploy to S3" {
