@@ -23,6 +23,22 @@ export const userIsLoggedIn = async () => {
 };
 
 /**
+ Fetches the user and returns the logged in username.
+ */
+export const userName = () => {
+  const token = getToken(config.tokenPath);
+  if (token) {
+    const accessToken = JSON.parse(token).access_token;
+    const base64Url = accessToken.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const parsedToken = JSON.parse(window.atob(base64));
+    return parsedToken['context']['user']['name'];   
+  } else {
+    return "";
+  }
+};
+
+/**
  Fetches the user's access token for a specific commons from session storage.
  @return { object } - the token stored for that commons OR
  @return { null }
@@ -74,4 +90,5 @@ export const handleLoginCompletion = () => {
 
 export const logout = () => {
   sessionStorage.removeItem(config.tokenPath);
+  window.location = `${origin}`;
 }

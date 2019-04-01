@@ -98,7 +98,7 @@ class UserInformation extends React.Component {
           {
             dataSets && dataSets.map((project, i) => {
               return (
-                  <li key={i}><input type='checkbox' key={i}/>{ project.name }</li>
+                  <li key={i}><input type='checkbox' key={i}/>{project.name} ({project.phsid})</li>
               )
             })
           }

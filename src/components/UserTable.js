@@ -5,6 +5,7 @@ import { AutoSizer, Column, Table } from 'react-virtualized';
 import 'react-virtualized/styles.css'; // only needs to be imported once
 import Popup from './Popup';
 import UserInformation from './UserInformation';
+import { deleteUser } from '../api/users';
 import './UserTable.css';
 
 const ROW_HEIGHT = 120;
@@ -24,6 +25,10 @@ class UserTable extends React.Component {
 
   closePopup = () => {
     this.setState({ user: null, deletePopup: false });
+  }
+
+  deleteUser = () => {
+    deleteUser(this.state.user.username).then(res => this.closePopup());
   }
 
   render() {
@@ -111,7 +116,7 @@ class UserTable extends React.Component {
               leftButtons={[
                 {
                   caption: 'Delete',
-                  fn: this.closePopup,
+                  fn: this.deleteUser,
                 },
               ]}
               rightButtons={[

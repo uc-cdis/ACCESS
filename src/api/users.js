@@ -49,3 +49,28 @@ export const postUsers = async (user) => {
     return false;
   }
 };
+
+/**
+ Delete user/
+ */
+
+export const deleteUser = async (user) => {
+  const token = getToken(config.tokenPath);
+  if (token) {
+    const accessToken = JSON.parse(token).access_token;
+    return fetch(`${config.apiHost}/user/${user}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+         'Authorization': `bearer ${accessToken}`
+       },
+    }).then((res) => {
+      if (res.status === 200) {
+        return true;
+      }
+      return false;
+    });
+  } else {
+    return false;
+  }
+};

@@ -1,7 +1,8 @@
 import React from 'react';
+import Button from '@gen3/ui-component/dist/components/Button';
 import UserInformation from './UserInformation';
 import UserTable from './UserTable';
-import { userIsLoggedIn } from '../api/login';
+import { userIsLoggedIn, userName, logout } from '../api/login';
 import { getUsers } from '../api/users';
 import { getDatasets } from '../api/datasets';
 import './ManageUsers.css';
@@ -38,6 +39,11 @@ class ManageUsers extends React.Component {
         {
           this.state.loggedIn ?
             <div className='manage-users'>
+              <Button
+                onClick={() => logout() }
+                buttonType={'primary'}
+                label={'Log out from '.concat(userName())}
+              />
               <div className='manage-users__tab-bar'>
                 <div
                   tab={0}
