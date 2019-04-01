@@ -27,7 +27,7 @@ class UserTable extends React.Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, dataSets } = this.props;
     const tableSize = (data.length + 1) * ROW_HEIGHT;
     return (
       <div className='user-table'>
@@ -42,14 +42,14 @@ class UserTable extends React.Component {
               rowGetter={({ index }) => data[index]}
             >
               <Column
-                width={300}
-                label='First Name'
-                dataKey='firstName'
+                label='Username'
+                dataKey='username'
+                width={200}
               />
               <Column
-                label='Last Name'
-                dataKey='lastName'
                 width={300}
+                label='Name'
+                dataKey='name'
               />
               <Column
                 label='Organization'
@@ -57,9 +57,24 @@ class UserTable extends React.Component {
                 width={200}
               />
               <Column
-                label='PI'
-                dataKey='PI'
-                width={300}
+                label='Contact Email'
+                dataKey='contact_email'
+                width={200}
+              />
+              <Column
+                label='eRA Commons'
+                dataKey='eracommons'
+                width={200}
+              />
+              <Column
+                label='Google Email'
+                dataKey='google_email'
+                width={200}
+              />
+              <Column
+                label='Expiration'
+                dataKey='expiration'
+                width={200}
               />
               <Column
                 label='Actions'
@@ -90,7 +105,7 @@ class UserTable extends React.Component {
             <Popup
               title='Delete User'
               message={
-                `Are you sure you want to delete ${this.state.user.firstName} ${this.state.user.lastName}?
+                `Are you sure you want to delete ${this.state.user.name} at ${this.state.user.organization}?
                 This action can't be undone.`
               }
               leftButtons={[
@@ -126,7 +141,7 @@ class UserTable extends React.Component {
                 },
               ]}
             >
-              <UserInformation user={this.state.user} />
+              <UserInformation user={this.state.user} dataSets={dataSets} />
             </Popup>
           ) : null
         }
