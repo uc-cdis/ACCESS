@@ -10,6 +10,7 @@ import './ManageUsers.css';
 class ManageUsers extends React.Component {
   constructor(props) {
     super(props);
+    this.updateUsers = this.updateUsers.bind(this);
     this.state = {
       selectedTab: 0,
       loggedIn: null,
@@ -27,6 +28,10 @@ class ManageUsers extends React.Component {
         getDatasets().then(datasetResults => this.setState({dataSets: datasetResults }));
       }
     });
+  }
+
+  updateUsers() {
+    getUsers().then(usersResults => this.setState({ users: usersResults }));
   }
 
   selectTab = tab => {
@@ -63,9 +68,9 @@ class ManageUsers extends React.Component {
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
-                    <UserInformation dataSets={this.state.dataSets} />
+                    <UserInformation dataSets={this.state.dataSets} updateUsers={this.updateUsers} />
                   ): (
-                    <UserTable data={this.state.users} dataSets={this.state.dataSets} />
+                    <UserTable data={this.state.users} dataSets={this.state.dataSets} updateUsers={this.updateUsers} />
                   )
                 }
               </div>

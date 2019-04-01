@@ -8,6 +8,7 @@ import './UserInformation.css';
 class UserInformation extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.state = {
       name: props.user.name,
       username: props.user.username,
@@ -107,7 +108,7 @@ class UserInformation extends React.Component {
           this.state.showButton ?
             <Button
               className='user-info__submit-button '
-              onClick={() => { postUsers(this.state);  }}
+              onClick={() => { postUsers(this.state).then(this.props.updateUsers());  }}
               label='Add User'
               buttonType='primary'
             />
@@ -130,6 +131,7 @@ UserInformation.propTypes = {
     google_email: PropTypes.string,
   }),
   dataSets: PropTypes.array,
+  updateUsers: PropTypes.func,
 };
 
 UserInformation.defaultProps = {
@@ -144,6 +146,7 @@ UserInformation.defaultProps = {
     expiration: '',
   },
   dataSets: [],
+  updateUsers: () => {},
 };
 
 export default UserInformation;
