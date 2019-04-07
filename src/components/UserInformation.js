@@ -119,7 +119,7 @@ class UserInformation extends React.Component {
           onClick={() => {
             this.setState({ addingUser: true }, () => {
               postUsers(this.state, this.props.token).then(res => {
-                this.updateUsers();
+                this.props.updateUsers();
                 this.showPopup(res.message);
                 this.setState({ addingUser: false,  });
               })
@@ -132,7 +132,7 @@ class UserInformation extends React.Component {
         {
           this.state.popup ?
             <Popup
-              title='Delete User'
+              title='Add User'
               message={this.state.message}
               rightButtons={[
                 {

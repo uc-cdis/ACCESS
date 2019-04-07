@@ -24,7 +24,7 @@ class ManageUsers extends React.Component {
       } else {
         this.updateTable();
       }
-    });
+    }).catch(error => error);
   }
 
   componentWillReceiveProps(nextProps) {

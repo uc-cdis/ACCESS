@@ -11,11 +11,14 @@ export const getUsers = async (token) => {
         'Content-Type': 'application/json',
          'Authorization': `bearer ${accessToken}`
        },
-    }).then((res) => {
-      if (res.status === 200) {
-        return res.json();
+    }).then(res => res.json()
+    ).then(({ status, data, message }) => {
+      if (status === 200) {
+        return data;
+      } else {
+        console.log('ERROR', message);
+        return [];
       }
-      return [];
     });
   } else {
     return [];
@@ -54,11 +57,12 @@ export const deleteUser = async (user, token) => {
         'Content-Type': 'application/json',
          'Authorization': `bearer ${accessToken}`
        },
-    }).then((res) => {
-      if (res.status === 200) {
+    }).then(res => res.json())
+    .then(({ status, data, message }) => {
+      if (status === 200) {
         return true;
       }
-      return false;
+      return message;
     });
   } else {
     return false;

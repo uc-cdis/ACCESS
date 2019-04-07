@@ -9,7 +9,7 @@ class Homepage extends Component {
       if (loggedIn) {
         this.props.history.push('/manage');
       }
-    });
+    }).catch(error => error);
   }
 
   componentWillReceiveProps(nextProps) {
