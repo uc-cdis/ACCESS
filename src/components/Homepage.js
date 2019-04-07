@@ -12,10 +12,6 @@ class Homepage extends Component {
     }).catch(error => error);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps)
-  }
-
   render() {
     return (
       <React.Fragment>

@@ -28,7 +28,7 @@ class UserTable extends React.Component {
   }
 
   deleteUser = () => {
-    deleteUser(this.state.user.username, this.props.token).then(res => this.closePopup());
+    deleteUser(this.state.user.username, this.props.token).then(res => this.props.updateTable()).then(res => this.closePopup());
   }
 
   render() {
