@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
+import Popup from './Popup';
 import { postUsers } from '../api/users';
 // import Select from 'react-select';
 import './UserInformation.css';
@@ -9,16 +10,18 @@ class UserInformation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: props.user.name,
-      username: props.user.username,
-      organization: props.user.organization,
-      eracommons: props.user.eracommons,
-      orcid: props.user.orcid,
-      expiration: props.user.expiration,
-      contact_email: props.user.contact_email,
-      google_email: props.user.google_email,
-      datasets: props.user.datasets,
-      showButton: props.user.name === ''
+      name: '',
+      username: '',
+      organization: '',
+      eracommons: '',
+      orcid: '',
+      expiration: '',
+      contact_email: '',
+      google_email: '',
+      datasets: [],
+      popup: false,
+      message: null,
+      addingUser: false,
     }
   }
 
@@ -52,6 +55,14 @@ class UserInformation extends React.Component {
 
   setGoogleEmail = e => {
     this.setState({ google_email: e.target.value });
+  }
+
+  showPopup = message => {
+    this.setState({ popup: true, message });
+  }
+
+  closePopup = () => {
+    this.setState({ popup: false, message: null });
   }
 
   render() {
@@ -103,13 +114,32 @@ class UserInformation extends React.Component {
             })
           }
          </ul>
+         <Button
+          className='user-info__submit-button '
+          onClick={() => {
+            this.setState({ addingUser: true }, () => {
+              postUsers(this.state, this.props.token).then(res => {
+                this.updateUsers();
+                this.showPopup(res.message);
+                this.setState({ addingUser: false,  });
+              })
+            });
+          }}
+          label='Add User'
+          buttonType='primary'
+          isPending={this.state.addingUser}
+        />
         {
-          this.state.showButton ?
-            <Button
-              className='user-info__submit-button '
-              onClick={() => { postUsers(this.state);  }}
-              label='Add User'
-              buttonType='primary'
+          this.state.popup ?
+            <Popup
+              title='Delete User'
+              message={this.state.message}
+              rightButtons={[
+                {
+                  caption: 'Close',
+                  fn: this.closePopup,
+                },
+              ]}
             />
           : null
         }
@@ -130,6 +160,8 @@ UserInformation.propTypes = {
     google_email: PropTypes.string,
   }),
   dataSets: PropTypes.array,
+  token: PropTypes.object,
+  updateUsers: PropTypes.func.isRequired,
 };
 
 UserInformation.defaultProps = {
@@ -144,6 +176,7 @@ UserInformation.defaultProps = {
     expiration: '',
   },
   dataSets: [],
+  token: null,
 };
 
 export default UserInformation;

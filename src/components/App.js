@@ -1,37 +1,39 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from '@gen3/ui-component/dist/components/Header';
-import { handleLoginCompletion } from '../api/login';
+import { Provider } from 'react-redux'
+import configureStore from '../store';
 import gen3Logo from '../images/gen3.png';
-import Homepage from './Homepage';
-import ManageUsers from './ManageUsers';
+import ReduxHomepage from './ReduxHomepage';
+import ReduxManageUsers from './ReduxManageUsers';
+import ReduxLogin from './ReduxLogin';
 import './App.css';
 
 class App extends Component {
   render() {
+    const store = configureStore();
     return (
-      <div className='app'>
-        <Header title='STAGE Access' logoSrc={gen3Logo} />
-        <BrowserRouter>
-          <Switch>
-            <Route
-              path='/login'
-              render={() => {
-                handleLoginCompletion();
-                return (null);
-              }}
-            />
-            <Route
-              path='/manage'
-              component={ManageUsers}
-            />
-            <Route
-              path='/'
-              component={Homepage}
-            />
-          </Switch>
-        </BrowserRouter>
-      </div>
+      <Provider store={store}>
+        <div className='app'>
+          <Header title='STAGE Access' logoSrc={gen3Logo} />
+          <BrowserRouter>
+            <Switch>
+              <Route
+                path='/login'
+                component={ReduxLogin}
+              />
+              <Route
+                path='/manage'
+                component={ReduxManageUsers}
+              />
+              <Route
+                path='/'
+                component={ReduxHomepage}
+              />
+            </Switch>
+          </BrowserRouter>
+        </div>
+      </Provider>
     );
   }
 }

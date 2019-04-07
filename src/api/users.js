@@ -1,13 +1,10 @@
 import config from '../config';
-import { getToken } from './login';
-
 /**
  Fetches the users in the table.
  */
-export const getUsers = async () => {
-  const token = getToken(config.tokenPath);
+export const getUsers = async (token) => {
   if (token) {
-    const accessToken = JSON.parse(token).access_token;
+    const accessToken = token.access_token;
     return fetch(`${config.apiHost}/users`, {
       method: 'GET',
       headers: {
@@ -28,10 +25,9 @@ export const getUsers = async () => {
 /**
  Add user.
  */
-export const postUsers = async (user) => {
-  const token = getToken(config.tokenPath);
+export const postUsers = async (user, token) => {
   if (token) {
-    const accessToken = JSON.parse(token).access_token;
+    const accessToken = token.access_token;
     return fetch(`${config.apiHost}/users`, {
       method: 'POST',
       headers: {
@@ -39,14 +35,9 @@ export const postUsers = async (user) => {
          'Authorization': `bearer ${accessToken}`
        },
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
-    }).then((res) => {
-      if (res.status === 200) {
-        return true;
-      }
-      return false;
-    });
+    }).then((res) => res.json()).then(data => data);
   } else {
-    return false;
+    return { message: 'No token sent' };
   }
 };
 
@@ -54,8 +45,7 @@ export const postUsers = async (user) => {
  Delete user/
  */
 
-export const deleteUser = async (user) => {
-  const token = getToken(config.tokenPath);
+export const deleteUser = async (user, token) => {
   if (token) {
     const accessToken = JSON.parse(token).access_token;
     return fetch(`${config.apiHost}/user/${user}`, {

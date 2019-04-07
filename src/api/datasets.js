@@ -1,13 +1,11 @@
 import config from '../config';
-import { getToken } from './login';
 
 /**
  Fetches the users in the table.
  */
-export const getDatasets = async () => {
-  const token = getToken(config.tokenPath);
+export const getDatasets = async (token) => {
   if (token) {
-    const accessToken = JSON.parse(token).access_token;
+    const accessToken = token.access_token;
     return fetch(`${config.apiHost}/datasets`, {
       method: 'GET',
       headers: {

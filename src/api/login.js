@@ -1,13 +1,11 @@
-import querystring from 'querystring';
 import config from '../config';
 
 /**
  Fetches the user and returns if the user is logged in.
  */
-export const userIsLoggedIn = async () => {
-  const token = getToken(config.tokenPath);
+export const userIsLoggedIn = async (token) => {
   if (token) {
-    const accessToken = JSON.parse(token).access_token;
+    const accessToken = token.access_token;
     return fetch(config.userApi, {
       method: 'GET',
       headers: {
@@ -23,72 +21,29 @@ export const userIsLoggedIn = async () => {
 };
 
 /**
- Fetches the user and returns the logged in username.
+ Fetches the user
  */
-export const userName = () => {
-  const token = getToken(config.tokenPath);
-  if (token) {
-    const accessToken = JSON.parse(token).access_token;
-    const base64Url = accessToken.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const parsedToken = JSON.parse(window.atob(base64));
-    return parsedToken['context']['user']['name'];   
-  } else {
-    return "";
-  }
-};
+export const getUser = (token) =>
+  fetch(config.userApi, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+       'Authorization': `bearer ${token}`
+     },
+  })
+  .then(res => res.json())
+  .then(data => data)
+  .catch(error => {
+    console.log('ERROR', error)
+  });
 
 /**
- Fetches the user's access token for a specific commons from session storage.
- @return { object } - the token stored for that commons OR
- @return { null }
- */
-export const getToken = (name) => {
-  return sessionStorage.getItem(name) || null;
-};
-
-/**
- Redirects the user to the authorization endpoint for a specific commons.
- Before doing this, stores the commons to be logged into and the current location
- in session storage for later use.
+ Redirects the user to the authorization endpoint.
+ Before doing this, stores the current location in session storage for later use.
  @param { string } location - the current url location.
  */
 export const loginRedirect = (location) => {
-  const redirectUri = encodeURIComponent(`${config.redirectUrl}`);
+  const redirectUri = encodeURIComponent(`http://localhost:8000/login`);
   sessionStorage.setItem('origin', location);
   window.location = `${config.authUrl}?client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}`;
 };
-
-/**
- Saves the token for a specific commons to session storage.
- @param { object } token - the token to be saved.
- */
-export const saveToken = (name, token) => {
-  const authToken = JSON.stringify(token);
-  sessionStorage.setItem(name, authToken);
-};
-
-/**
- Handles actions needed after the token is returned by OAuth - saves the token
- and redirects the user back to the original location. Also removes the temporary
- variables stored in session storage - the name of the commons being logged into
- and the location of the user when login initiated.
- */
-export const handleLoginCompletion = () => {
-  const fragments = window.location.href.split('#');
-  if (fragments.length === 1) {
-    return
-  }
-  const responseValues = fragments[1];
-  const tokenParams = querystring.parse(responseValues);
-  const origin = sessionStorage.getItem('origin');
-  if (tokenParams && !tokenParams.error) {
-    saveToken(config.tokenPath, tokenParams);
-  }
-  window.location = `${origin}manage`;
-};
-
-export const logout = () => {
-  sessionStorage.removeItem(config.tokenPath);
-  window.location = `${origin}`;
-}

@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@gen3/ui-component/dist/components/Button';
 import UserInformation from './UserInformation';
 import UserTable from './UserTable';
-import { userIsLoggedIn, userName, logout } from '../api/login';
+import { userIsLoggedIn } from '../api/login';
 import { getUsers } from '../api/users';
 import { getDatasets } from '../api/datasets';
 import './ManageUsers.css';
@@ -12,20 +12,36 @@ class ManageUsers extends React.Component {
     super(props);
     this.state = {
       selectedTab: 0,
-      loggedIn: null,
       users: [],
       dataSets: [],
     }
   }
 
   componentDidMount() {
-    userIsLoggedIn().then((loggedIn) => {
+    userIsLoggedIn(this.props.token).then((loggedIn) => {
       if (!loggedIn) {
         this.props.history.push('/');
       } else {
-        getUsers().then(usersResults => this.setState({ loggedIn: true, users: usersResults }));
-        getDatasets().then(datasetResults => this.setState({dataSets: datasetResults }));
+        this.updateTable();
       }
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!!!nextProps.user) {
+      this.props.history.push('/');
+    }
+  }
+
+  updateTable = () => {
+    console.log('updating users...')
+    getUsers(this.props.token).then(usersResults => {
+      console.log('users', usersResults)
+      this.setState({ users: usersResults });
+    });
+    getDatasets(this.props.token).then(datasetResults => {
+      console.log('datasets', datasetResults)
+      this.setState({dataSets: datasetResults })
     });
   }
 
@@ -37,12 +53,12 @@ class ManageUsers extends React.Component {
     return (
       <React.Fragment>
         {
-          this.state.loggedIn ?
+          this.props.user ?
             <div className='manage-users'>
               <Button
-                onClick={() => logout() }
-                buttonType={'primary'}
-                label={'Log out from '.concat(userName())}
+                onClick={() => this.props.logout() }
+                buttonType='primary'
+                label={'Log out from '.concat(this.props.user.name)}
               />
               <div className='manage-users__tab-bar'>
                 <div
@@ -63,9 +79,9 @@ class ManageUsers extends React.Component {
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
-                    <UserInformation dataSets={this.state.dataSets} />
+                    <UserInformation dataSets={this.state.dataSets} updateUsers={this.updateTable} {...this.props} />
                   ): (
-                    <UserTable data={this.state.users} dataSets={this.state.dataSets} />
+                    <UserTable data={this.state.users} dataSets={this.state.dataSets} updateTable={this.updateTable} {...this.props} />
                   )
                 }
               </div>

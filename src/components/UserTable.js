@@ -24,11 +24,11 @@ class UserTable extends React.Component {
   }
 
   closePopup = () => {
-    this.setState({ user: null, deletePopup: false });
+    this.setState({ user: null, deletePopup: false }, () => this.props.updateTable());
   }
 
   deleteUser = () => {
-    deleteUser(this.state.user.username).then(res => this.closePopup());
+    deleteUser(this.state.user.username, this.props.token).then(res => this.closePopup());
   }
 
   render() {
@@ -157,6 +157,12 @@ class UserTable extends React.Component {
 
 UserTable.propTypes = {
   data: PropTypes.array.isRequired,
+  updateTable: PropTypes.func.isRequired,
+  token: PropTypes.object,
+};
+
+UserTable.defaultProps = {
+  token: null,
 };
 
 export default UserTable;
