@@ -13,7 +13,10 @@ export const getDatasets = async (token) => {
          'Authorization': `bearer ${accessToken}`
        },
     }).then(res => res.json())
-    .then(data => data)
+    .then(data => {
+      console.log('datasets are', data)
+      return data;
+    })
     .catch(error => {
       console.log('ERROR', error);
       return error;

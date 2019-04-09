@@ -95,7 +95,8 @@ class UserInformation extends React.Component {
   }
 
   render() {
-    const { dataSets } = this.props;
+    console.log('this.props', this.props)
+    const { allDataSets } = this.props;
     return (
       <React.Fragment>
         <ul className='user-info__user-details'>
@@ -136,7 +137,7 @@ class UserInformation extends React.Component {
         <h2>Data Set Access</h2>
         <ul className='user-info__user-access'>
           {
-            dataSets && dataSets.map((project, i) => {
+            allDataSets && allDataSets.map((project, i) => {
               return (
                   <li key={i}>
                     <input
@@ -151,23 +152,27 @@ class UserInformation extends React.Component {
             })
           }
          </ul>
-         <Button
-          className='user-info__submit-button '
-          onClick={() => {
-            this.setState({ addingUser: true }, () => {
-              postUsers(this.state, this.props.token).then(res => {
-                this.props.updateUsers();
-                this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
-                this.setState({ addingUser: false, error: res.message ? res.message : null });
-              })
-            });
-          }}
-          label='Add User'
-          buttonType='primary'
-          isPending={this.state.addingUser}
-        />
+         {
+           this.props.selectedUser.name !== "" ? null : (
+             <Button
+              className='user-info__submit-button '
+              onClick={() => {
+                this.setState({ addingUser: true }, () => {
+                  postUsers(this.state, this.props.token).then(res => {
+                    this.props.updateUsers();
+                    this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
+                    this.setState({ addingUser: false, error: res.message ? res.message : null });
+                  })
+                });
+              }}
+              label='Add User'
+              buttonType='primary'
+              isPending={this.state.addingUser}
+            />
+          )
+        }
         {
-          this.state.popup ?
+          this.state.popup  ?
             <Popup
               title='Add User'
               message={this.state.message}
@@ -196,7 +201,7 @@ UserInformation.propTypes = {
     contact_email: PropTypes.string,
     google_email: PropTypes.string,
   }),
-  dataSets: PropTypes.array,
+  allDataSets: PropTypes.array,
   token: PropTypes.object,
   updateUsers: PropTypes.func.isRequired,
 };
@@ -211,8 +216,9 @@ UserInformation.defaultProps = {
     contact_email: '',
     google_email: '',
     expiration: '',
+    datasets: [],
   },
-  dataSets: [],
+  allDataSets: [],
   token: null,
 };
 

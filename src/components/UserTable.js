@@ -38,7 +38,7 @@ class UserTable extends React.Component {
   }
 
   render() {
-    const { data, dataSets } = this.props;
+    const { data, allDataSets } = this.props;
     const tableSize = (data.length + 1) * ROW_HEIGHT;
     return (
       <div className='user-table'>
@@ -157,7 +157,7 @@ class UserTable extends React.Component {
                 },
               ]}
             >
-              <UserInformation selectedUser={this.state.selectedUser} dataSets={dataSets} updateUsers={this.props.updateTable}/>
+              <UserInformation selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable}/>
             </Popup>
           ) : null
         }

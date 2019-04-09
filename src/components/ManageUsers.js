@@ -14,7 +14,7 @@ class ManageUsers extends React.Component {
     this.state = {
       selectedTab: 0,
       users: [],
-      dataSets: [],
+      allDataSets: [],
     }
   }
 
@@ -42,7 +42,7 @@ class ManageUsers extends React.Component {
       this.setState({ users: usersResults });
     });
     getDatasets(this.props.token).then(datasetResults => {
-      this.setState({dataSets: datasetResults })
+      this.setState({allDataSets: datasetResults })
     });
   }
 
@@ -84,9 +84,9 @@ class ManageUsers extends React.Component {
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
-                    <UserInformation dataSets={this.state.dataSets} updateUsers={this.updateTable} {...this.props} />
+                    <UserInformation allDataSets={this.state.allDataSets} updateUsers={this.updateTable} {...this.props} />
                   ): (
-                    <UserTable data={this.state.users} dataSets={this.state.dataSets} updateTable={this.updateTable} {...this.props} />
+                    <UserTable data={this.state.users} allDataSets={this.state.allDataSets} updateTable={this.updateTable} {...this.props} />
                   )
                 }
               </div>
