@@ -12,7 +12,13 @@ export const getUsers = async (token) => {
          'Authorization': `bearer ${accessToken}`
        },
     }).then(res => res.json())
-    .then(data => data)
+    .then(data => {
+      if (!(data instanceof Array)) {
+        console.error(data);
+        return [];
+      }
+      return data;
+    })
     .catch(error => {
       console.log('ERROR', error);
       return error;

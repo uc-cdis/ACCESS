@@ -14,6 +14,10 @@ export const getDatasets = async (token) => {
        },
     }).then(res => res.json())
     .then(data => {
+      if (!(data instanceof Array)) {
+        console.error(data);
+        return [];
+      }
       console.log('datasets are', data)
       return data;
     })
