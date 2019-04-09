@@ -11,14 +11,11 @@ export const getUsers = async (token) => {
         'Content-Type': 'application/json',
          'Authorization': `bearer ${accessToken}`
        },
-    }).then(res => res.json()
-    ).then(({ status, data, message }) => {
-      if (status === 200) {
-        return data;
-      } else {
-        console.log('ERROR', message);
-        return [];
-      }
+    }).then(res => res.json())
+    .then(data => data)
+    .catch(error => {
+      console.log('ERROR', error);
+      return error;
     });
   } else {
     return [];
@@ -50,7 +47,7 @@ export const postUsers = async (user, token) => {
 
 export const deleteUser = async (user, token) => {
   if (token) {
-    const accessToken = JSON.parse(token).access_token;
+    const accessToken = token.access_token;
     return fetch(`${config.apiHost}/user/${user}`, {
       method: 'DELETE',
       headers: {

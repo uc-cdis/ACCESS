@@ -29,6 +29,7 @@ class ManageUsers extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps)
     if (!!!nextProps.user) {
       this.props.history.push('/');
     }
@@ -41,7 +42,6 @@ class ManageUsers extends React.Component {
       this.setState({ users: usersResults });
     });
     getDatasets(this.props.token).then(datasetResults => {
-      console.log('datasets', datasetResults)
       this.setState({dataSets: datasetResults })
     });
   }

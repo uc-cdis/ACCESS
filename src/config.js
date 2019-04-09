@@ -1,4 +1,4 @@
-const authHost = 'https://qa-dcp.planx-pla.net';
+const authHost = 'https://gen3.datastage.io';
 const apiHost = 'https://access-api.datastage.io';
 const oauthResponseType='id_token+token';
 const oauthScope='openid+user'

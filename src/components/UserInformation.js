@@ -10,17 +10,18 @@ class UserInformation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      username: '',
-      organization: '',
-      eracommons: '',
-      orcid: '',
-      expiration: '',
-      contact_email: '',
-      google_email: '',
+      name: props.selectedUser.name,
+      username: props.selectedUser.username,
+      organization: props.selectedUser.organization,
+      eracommons: props.selectedUser.eracommons,
+      orcid: props.selectedUser.orcid,
+      expiration: props.selectedUser.expiration,
+      contact_email: props.selectedUser.contact_email,
+      google_email: props.selectedUser.google_email,
       datasets: [],
       popup: false,
       message: null,
+      error: null,
       addingUser: false,
     }
   }
@@ -61,8 +62,36 @@ class UserInformation extends React.Component {
     this.setState({ popup: true, message });
   }
 
-  closePopup = () => {
-    this.setState({ popup: false, message: null });
+  closePopup = success => {
+    if (this.state.error === null) {
+      this.setState({
+        popup: false,
+        message: null,
+        username: '',
+        name: '',
+        organization: '',
+        eracommons: '',
+        orcid: '',
+        contact_email: '',
+        google_email: '',
+        expiration: '',
+        datasets: [],
+      });
+    } else {
+      this.setState({
+        popup: false,
+        message: null,
+        error: null,
+      });
+    }
+  }
+
+  selectDataSet = phsid => {
+    if (this.state.datasets.includes(phsid)) {
+      this.setState(prevState => ({ datasets: prevState.datasets.filter(id => id !== phsid) }));
+    } else {
+      this.setState(prevState => ({ datasets: prevState.datasets.concat(phsid) }));
+    }
   }
 
   render() {
@@ -109,7 +138,15 @@ class UserInformation extends React.Component {
           {
             dataSets && dataSets.map((project, i) => {
               return (
-                  <li key={i}><input type='checkbox' key={i}/>{project.name} ({project.phsid})</li>
+                  <li key={i}>
+                    <input
+                      type='checkbox'
+                      key={i}
+                      checked={this.state.datasets.includes(project.phsid)}
+                      onChange={() => this.selectDataSet(project.phsid)}
+                    />
+                    {project.name} ({project.phsid})
+                  </li>
               )
             })
           }
@@ -120,8 +157,8 @@ class UserInformation extends React.Component {
             this.setState({ addingUser: true }, () => {
               postUsers(this.state, this.props.token).then(res => {
                 this.props.updateUsers();
-                this.showPopup(res.message);
-                this.setState({ addingUser: false,  });
+                this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
+                this.setState({ addingUser: false, error: res.message ? res.message : null });
               })
             });
           }}
@@ -165,7 +202,7 @@ UserInformation.propTypes = {
 };
 
 UserInformation.defaultProps = {
-  user: {
+  selectedUser: {
     username: '',
     name: '',
     organization: '',

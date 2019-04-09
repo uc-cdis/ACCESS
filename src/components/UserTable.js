@@ -4,6 +4,7 @@ import Button from '@gen3/ui-component/dist/components/Button';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import 'react-virtualized/styles.css'; // only needs to be imported once
 import Popup from './Popup';
+import Spinner from './Spinner';
 import UserInformation from './UserInformation';
 import { deleteUser } from '../api/users';
 import './UserTable.css';
@@ -14,21 +15,26 @@ class UserTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: null,
+      selectedUser: null,
       deletePopup: false,
+      loading: false,
     };
   }
 
-  openPopup = (user, deletePopup) => {
-    this.setState({ user, deletePopup });
+  openPopup = (selectedUser, deletePopup) => {
+    this.setState({ selectedUser, deletePopup });
   }
 
   closePopup = () => {
-    this.setState({ user: null, deletePopup: false }, () => this.props.updateTable());
+    this.setState({ selectedUser: null, deletePopup: false }, () => this.props.updateTable());
   }
 
   deleteUser = () => {
-    deleteUser(this.state.user.username, this.props.token).then(res => this.props.updateTable()).then(res => this.closePopup());
+    this.setState({ deletePopup: false, loading: true }, () => {
+      deleteUser(this.state.selectedUser.username, this.props.token)
+        .then(res => this.props.updateTable())
+        .then(() => this.setState({ selectedUser: null, loading: false }));
+    });
   }
 
   render() {
@@ -36,81 +42,86 @@ class UserTable extends React.Component {
     const tableSize = (data.length + 1) * ROW_HEIGHT;
     return (
       <div className='user-table'>
-        <AutoSizer disableHeight>
-          {({ width }) => (
-            <Table
-              width={width}
-              height={tableSize < 800 ? tableSize : 800}
-              headerHeight={ROW_HEIGHT}
-              rowHeight={ROW_HEIGHT}
-              rowCount={data.length}
-              rowGetter={({ index }) => data[index]}
-            >
-              <Column
-                label='Username'
-                dataKey='username'
-                width={200}
-              />
-              <Column
-                width={300}
-                label='Name'
-                dataKey='name'
-              />
-              <Column
-                label='Organization'
-                dataKey='organization'
-                width={200}
-              />
-              <Column
-                label='Contact Email'
-                dataKey='contact_email'
-                width={200}
-              />
-              <Column
-                label='eRA Commons'
-                dataKey='eracommons'
-                width={200}
-              />
-              <Column
-                label='Google Email'
-                dataKey='google_email'
-                width={200}
-              />
-              <Column
-                label='Expiration'
-                dataKey='expiration'
-                width={200}
-              />
-              <Column
-                label='Actions'
-                dataKey='actions'
-                width={200}
-                cellRenderer={({ rowIndex }) => (
-                  <React.Fragment>
-                    <Button
-                      className='user-table__button'
-                      onClick={() => this.openPopup(data[rowIndex], false)}
-                      buttonType='primary'
-                      label='Edit'
-                    />
-                    <Button
-                      className='user-table__button'
-                      onClick={() => this.openPopup(data[rowIndex], true)}
-                      buttonType='primary'
-                      label='Delete'
-                    />
-                  </React.Fragment>
-                )}
-              />
-            </Table>
-          )}
-        </AutoSizer>
         {
-          this.state.user && this.state.deletePopup ? (
+          this.state.loading ?
+            <Spinner />
+            :
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <Table
+                  width={width}
+                  height={tableSize < 800 ? tableSize : 800}
+                  headerHeight={ROW_HEIGHT}
+                  rowHeight={ROW_HEIGHT}
+                  rowCount={data.length}
+                  rowGetter={({ index }) => data[index]}
+                >
+                  <Column
+                    label='Username'
+                    dataKey='username'
+                    width={200}
+                  />
+                  <Column
+                    width={300}
+                    label='Name'
+                    dataKey='name'
+                  />
+                  <Column
+                    label='Organization'
+                    dataKey='organization'
+                    width={200}
+                  />
+                  <Column
+                    label='Contact Email'
+                    dataKey='contact_email'
+                    width={200}
+                  />
+                  <Column
+                    label='eRA Commons'
+                    dataKey='eracommons'
+                    width={200}
+                  />
+                  <Column
+                    label='Google Email'
+                    dataKey='google_email'
+                    width={200}
+                  />
+                  <Column
+                    label='Expiration'
+                    dataKey='expiration'
+                    width={200}
+                  />
+                  <Column
+                    label='Actions'
+                    dataKey='actions'
+                    width={200}
+                    cellRenderer={({ rowIndex }) => (
+                      <React.Fragment>
+                        <Button
+                          className='user-table__button'
+                          onClick={() => this.openPopup(data[rowIndex], false)}
+                          buttonType='primary'
+                          label='Edit'
+                        />
+                        <Button
+                          className='user-table__button'
+                          onClick={() => this.openPopup(data[rowIndex], true)}
+                          buttonType='primary'
+                          label='Delete'
+                        />
+                      </React.Fragment>
+                    )}
+                  />
+                </Table>
+              )}
+            </AutoSizer>
+        }
+        {
+          this.state.selectedUser && this.state.deletePopup ? (
             <Popup
               title='Delete User'
               message={
-                `Are you sure you want to delete ${this.state.user.name} at ${this.state.user.organization}?
+                `Are you sure you want to delete ${this.state.selectedUser.name} at ${this.state.selectedUser.organization}?
                 This action can't be undone.`
               }
               leftButtons={[
@@ -129,7 +140,7 @@ class UserTable extends React.Component {
           ) : null
         }
         {
-          this.state.user && !this.state.deletePopup ? (
+          this.state.selectedUser && !this.state.deletePopup && !this.state.loading ? (
             <Popup
               title='Edit User'
               message=''
@@ -146,7 +157,7 @@ class UserTable extends React.Component {
                 },
               ]}
             >
-              <UserInformation user={this.state.user} dataSets={dataSets} />
+              <UserInformation selectedUser={this.state.selectedUser} dataSets={dataSets} updateUsers={this.props.updateTable}/>
             </Popup>
           ) : null
         }
