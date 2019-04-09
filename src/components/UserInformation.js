@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
 import Popup from './Popup';
-import { postUsers } from '../api/users';
+import { postUser } from '../api/users';
 // import Select from 'react-select';
 import './UserInformation.css';
 
@@ -158,7 +158,7 @@ class UserInformation extends React.Component {
               className='user-info__submit-button '
               onClick={() => {
                 this.setState({ addingUser: true }, () => {
-                  postUsers(this.state, this.props.token).then(res => {
+                  postUser(this.state, this.props.token).then(res => {
                     this.props.updateUsers();
                     this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
                     this.setState({ addingUser: false, error: res.message ? res.message : null });

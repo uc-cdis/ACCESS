@@ -9,7 +9,7 @@ export const getUsers = async (token) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-         'Authorization': `bearer ${accessToken}`
+        'Authorization': `bearer ${accessToken}`
        },
     }).then(res => res.json())
     .then(data => {
@@ -31,14 +31,33 @@ export const getUsers = async (token) => {
 /**
  Add user.
  */
-export const postUsers = async (user, token) => {
+export const postUser = async (user, token) => {
   if (token) {
     const accessToken = token.access_token;
     return fetch(`${config.apiHost}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-         'Authorization': `bearer ${accessToken}`
+        'Authorization': `bearer ${accessToken}`
+       },
+      body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
+    }).then((res) => res.json()).then(data => data);
+  } else {
+    return { message: 'No token sent' };
+  }
+};
+
+/**
+ Edit user.
+ */
+export const editUser = async (user, token) => {
+  if (token) {
+    const accessToken = token.access_token;
+    return fetch(`${config.apiHost}/users`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${accessToken}`
        },
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
     }).then((res) => res.json()).then(data => data);
@@ -58,7 +77,7 @@ export const deleteUser = async (user, token) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-         'Authorization': `bearer ${accessToken}`
+        'Authorization': `bearer ${accessToken}`
        },
     }).then(res => res.json())
     .then(({ status, data, message }) => {

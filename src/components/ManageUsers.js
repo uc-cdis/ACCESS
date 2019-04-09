@@ -12,7 +12,7 @@ class ManageUsers extends React.Component {
     super(props);
     this.updateUsers = this.updateUsers.bind(this);
     this.state = {
-      selectedTab: 0,
+      selectedTab: 1,
       users: [],
       allDataSets: [],
     }

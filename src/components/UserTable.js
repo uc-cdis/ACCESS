@@ -6,7 +6,7 @@ import 'react-virtualized/styles.css'; // only needs to be imported once
 import Popup from './Popup';
 import Spinner from './Spinner';
 import UserInformation from './UserInformation';
-import { deleteUser } from '../api/users';
+import { deleteUser, editUser } from '../api/users';
 import './UserTable.css';
 
 const ROW_HEIGHT = 120;
@@ -14,6 +14,7 @@ const ROW_HEIGHT = 120;
 class UserTable extends React.Component {
   constructor(props) {
     super(props);
+    this.selectedUserInformation = React.createRef();
     this.state = {
       selectedUser: null,
       deletePopup: false,
@@ -32,6 +33,15 @@ class UserTable extends React.Component {
   deleteUser = () => {
     this.setState({ deletePopup: false, loading: true }, () => {
       deleteUser(this.state.selectedUser.username, this.props.token)
+        .then(res => this.props.updateTable())
+        .then(() => this.setState({ selectedUser: null, loading: false }));
+    });
+  }
+
+  editUser = () => {
+    let newInformation = this.selectedUserInformation.current.state;
+    this.setState({ loading: true }, () => {
+      editUser(newInformation, this.props.token)
         .then(res => this.props.updateTable())
         .then(() => this.setState({ selectedUser: null, loading: false }));
     });
@@ -147,7 +157,7 @@ class UserTable extends React.Component {
               leftButtons={[
                 {
                   caption: 'Save',
-                  fn: this.closePopup,
+                  fn: this.editUser,
                 },
               ]}
               rightButtons={[
@@ -157,7 +167,7 @@ class UserTable extends React.Component {
                 },
               ]}
             >
-              <UserInformation selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable}/>
+              <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable}/>
             </Popup>
           ) : null
         }
