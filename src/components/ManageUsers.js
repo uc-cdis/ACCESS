@@ -12,7 +12,7 @@ class ManageUsers extends React.Component {
     super(props);
     this.updateUsers = this.updateUsers.bind(this);
     this.state = {
-      selectedTab: 1,
+      selectedTab: 0,
       users: [],
       allDataSets: [],
     }
@@ -71,22 +71,22 @@ class ManageUsers extends React.Component {
                   className={'manage-users__tab'.concat(this.state.selectedTab === 0 ? ' manage-users__tab--selected' : '' )}
                   onClick={() => this.selectTab(0)}
                 >
-                  Add a New User
+                  Manage Current Users
                 </div>
                 <div
                   tab={1}
                   className={'manage-users__tab'.concat(this.state.selectedTab === 1 ? ' manage-users__tab--selected' : '' )}
                   onClick={() => this.selectTab(1)}
                 >
-                  Manage Current Users
+                  Add a New User
                 </div>
               </div>
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
-                    <UserInformation allDataSets={this.state.allDataSets} updateUsers={this.updateTable} {...this.props} />
-                  ): (
                     <UserTable data={this.state.users} allDataSets={this.state.allDataSets} updateTable={this.updateTable} {...this.props} />
+                  ): (
+                    <UserInformation allDataSets={this.state.allDataSets} updateUsers={this.updateTable} {...this.props} />
                   )
                 }
               </div>

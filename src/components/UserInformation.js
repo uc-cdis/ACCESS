@@ -94,6 +94,21 @@ class UserInformation extends React.Component {
     }
   }
 
+  // TODO: check expiration is date format
+  checkFieldsAreValid = () => {
+    const requiredStringFields = ['eracommons','orcid', 'name', 'organization', 'contact_email', 'google_email', 'username', 'expiration'];
+    var invalidFields = [];
+    for(var i = 0; i < requiredStringFields.length; i++) {
+      let val = this.state[requiredStringFields[i]];
+      if (!Boolean(val.trim()))
+        invalidFields.push(requiredStringFields[i])
+    }
+    if (invalidFields.length > 0)
+      return `You have not provided a value for the following required fields: ${invalidFields.join(', ')}.`;
+    else
+      return '';
+  }
+
   render() {
     console.log('this.props', this.props)
     const { allDataSets } = this.props;
@@ -157,13 +172,20 @@ class UserInformation extends React.Component {
              <Button
               className='user-info__submit-button '
               onClick={() => {
-                this.setState({ addingUser: true }, () => {
-                  postUser(this.state, this.props.token).then(res => {
-                    this.props.updateUsers();
-                    this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
-                    this.setState({ addingUser: false, error: res.message ? res.message : null });
-                  })
-                });
+                let validationError = this.checkFieldsAreValid();
+                if (validationError) {
+                  this.showPopup(validationError);
+                  this.setState({ addingUser: false, error: true });
+                }
+                else {
+                  this.setState({ addingUser: true }, () => {
+                    postUser(this.state, this.props.token).then(res => {
+                      this.props.updateUsers();
+                      this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
+                      this.setState({ addingUser: false, error: res.message ? res.message : null });
+                    })
+                  });
+                }
               }}
               label='Add User'
               buttonType='primary'
