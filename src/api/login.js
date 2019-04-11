@@ -22,7 +22,7 @@ export const userIsLoggedIn = async (token) => {
 
 /**
  Returns logged in user information
- e.g. {'iam': 'DAC'/'PI', 'organization': 'xxx', 'datasets': ['a', 'b']}
+ e.g. {iam: 'DAC'/'PI', organization: 'xxx', datasets: ['a', 'b']}
  */
 export const whoAmI = async (accessToken) => {
   if (accessToken) {
