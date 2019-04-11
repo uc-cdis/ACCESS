@@ -1,4 +1,5 @@
 import config from '../config';
+
 /**
  Fetches the users in the table.
  */
@@ -40,6 +41,7 @@ export const postUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
        },
+      // TODO: handle user.is_pi
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
     }).then((res) => res.json()).then(data => data);
   } else {
@@ -59,6 +61,7 @@ export const editUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
        },
+      // TODO: handle user.is_pi
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
     }).then((res) => res.json()).then(data => data);
   } else {

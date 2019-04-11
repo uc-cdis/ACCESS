@@ -21,6 +21,35 @@ export const userIsLoggedIn = async (token) => {
 };
 
 /**
+ Returns logged in user information
+ e.g. {'iam': 'DAC'/'PI', 'organization': 'xxx', 'datasets': ['a', 'b']}
+ */
+export const whoAmI = async (accessToken) => {
+  if (accessToken) {
+    return fetch(`${config.apiHost}/whoami`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${accessToken}`
+       },
+    }).then(res => res.json())
+    .then(data => {
+      if (!data.iam) {
+        console.error(data);
+        return {};
+      }
+      return data;
+    })
+    .catch(error => {
+      console.log('ERROR', error);
+      return error;
+    });
+  } else {
+    return {};
+  }
+};
+
+/**
  Fetches the user
  */
 export const getUser = (token) =>
@@ -32,7 +61,10 @@ export const getUser = (token) =>
      },
   })
   .then(res => res.json())
-  .then(data => data)
+  .then(data => {
+    // add whoAmI info to the user
+    return whoAmI(token).then(whoRes => Object.assign(data, whoRes));
+  })
   .catch(error => {
     console.log('ERROR', error)
   });

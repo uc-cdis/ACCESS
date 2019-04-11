@@ -37,10 +37,18 @@
   margin-left: 20px;
   border-radius: 4px;
   box-shadow: none;
-  border-style: solid;
   border: 1px solid var(--g3-color__gray);
   font-size: 14px;
   outline: none;
+}
+
+.user-info__user-detail-dropdown {
+  width: 80%;
+  height: 34px;
+  margin-left: 20px;
+  border: 1px solid var(--g3-color__gray);
+  font-size: 14px;
+  background: white;
 }
 
 .user-info__user-access input[type='checkbox'] {

@@ -18,6 +18,7 @@ class UserInformation extends React.Component {
       expiration: props.selectedUser.expiration,
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
+      is_pi: false,
       datasets: [],
       popup: false,
       message: null,
@@ -56,6 +57,10 @@ class UserInformation extends React.Component {
 
   setGoogleEmail = e => {
     this.setState({ google_email: e.target.value });
+  }
+
+  setPI = e => {
+    this.setState({ is_pi: e.target.value === 'yes' });
   }
 
   showPopup = message => {
@@ -147,6 +152,13 @@ class UserInformation extends React.Component {
           <li className='user-info__user-detail'>
             <label>Access Expiration Date</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} />
+          </li>
+          <li className='user-info__user-detail'>
+            <label>PI?</label>
+              <select className='user-info__user-detail-dropdown' onChange={this.setPI} defaultValue='no'>
+                <option value='yes'>Yes</option>
+                <option value='no'>No</option>
+              </select>
           </li>
         </ul>
         <h2>Data Set Access</h2>
