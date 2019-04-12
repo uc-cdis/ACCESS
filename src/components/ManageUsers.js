@@ -35,14 +35,14 @@ class ManageUsers extends React.Component {
     }
   }
 
-  updateTable = () => {
+  updateTable = async () => {
     console.log('updating users...')
-    getUsers(this.props.token).then(usersResults => {
+    await getUsers(this.props.token).then(usersResults => {
       console.log('users', usersResults)
       this.setState({ users: usersResults });
     });
-    getDatasets(this.props.token).then(datasetResults => {
-      this.setState({allDataSets: datasetResults })
+    await getDatasets(this.props.token).then(datasetResults => {
+      this.setState({allDataSets: datasetResults });
     });
   }
 

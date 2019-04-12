@@ -33,7 +33,7 @@ class UserTable extends React.Component {
   deleteUser = () => {
     this.setState({ deletePopup: false, loading: true }, () => {
       deleteUser(this.state.selectedUser.username, this.props.token)
-        .then(res => this.props.updateTable())
+        .then(async res => this.props.updateTable())
         .then(() => this.setState({ selectedUser: null, loading: false }));
     });
   }
@@ -42,7 +42,7 @@ class UserTable extends React.Component {
     let newInformation = this.selectedUserInformation.current.state;
     this.setState({ loading: true }, () => {
       editUser(newInformation, this.props.token)
-        .then(res => this.props.updateTable())
+        .then(async res => this.props.updateTable())
         .then(() => this.setState({ selectedUser: null, loading: false }));
     });
   }
