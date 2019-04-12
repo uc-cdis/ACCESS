@@ -43,7 +43,7 @@ export const postUser = async (user, token, isPI) => {
         'Authorization': `bearer ${accessToken}`
       },
       // TODO: handle isPI
-      body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
+      body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: user.datasets}),
     })
     .then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);

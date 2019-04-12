@@ -18,7 +18,7 @@ class UserInformation extends React.Component {
       expiration: props.selectedUser.expiration,
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
-      datasets: [],
+      datasets: props.selectedUser.datasets,
       popup: false,
       message: null,
       error: null,
@@ -168,8 +168,10 @@ class UserInformation extends React.Component {
                     <input
                       type='checkbox'
                       key={i}
-                      checked={this.state.datasets.includes(project.phsid)}
-                      onChange={() => this.selectDataSet(project.phsid)}
+                      checked={this.state.datasets.some(
+                        d => d.phsid === project.phsid && d.name === project.name
+                      )}
+                      onChange={() => this.selectDataSet(project)}
                     />
                     {project.name} ({project.phsid})
                   </li>
@@ -232,6 +234,7 @@ UserInformation.propTypes = {
     expiration: PropTypes.string,
     contact_email: PropTypes.string,
     google_email: PropTypes.string,
+    datasets: PropTypes.array,
   }),
   whoAmI: PropTypes.shape({
     iam: PropTypes.string,
