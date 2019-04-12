@@ -11,7 +11,7 @@ export const getUsers = async (token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
-       },
+      },
     }).then(res => res.json())
     .then(data => {
       if (!(data instanceof Array)) {
@@ -31,8 +31,9 @@ export const getUsers = async (token) => {
 
 /**
  Add user.
+ isPI (boolean): whether the new user is a PI. DACs can only add PIs; PIs can only add normal users
  */
-export const postUser = async (user, token) => {
+export const postUser = async (user, token, isPI) => {
   if (token) {
     const accessToken = token.access_token;
     return fetch(`${config.apiHost}/users`, {
@@ -40,8 +41,8 @@ export const postUser = async (user, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
-       },
-      // TODO: handle user.is_pi
+      },
+      // TODO: handle isPI
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
     })
     .then((res) => res.json())
@@ -62,10 +63,9 @@ export const editUser = async (user, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
-       },
-      // TODO: handle user.is_pi
+      },
       body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: []}),
-    }).then((res) => res.json()).then(data => data);
+    }).then((res) => {console.log(res);return res.json()}).then(data => data);
   } else {
     return { message: 'No token sent' };
   }
@@ -83,7 +83,7 @@ export const deleteUser = async (user, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
-       },
+      },
     }).then(res => res.json())
     .then(({ status, data, message }) => {
       if (status === 200) {

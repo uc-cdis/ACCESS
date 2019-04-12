@@ -167,7 +167,7 @@ class UserTable extends React.Component {
                 },
               ]}
             >
-              <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable}/>
+              <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable} whoAmI={this.props.whoAmI}/>
             </Popup>
           ) : null
         }

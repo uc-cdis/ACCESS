@@ -1,4 +1,4 @@
-import { getUser } from '../api/login';
+import { getUser, whoAmI } from '../api/login';
 
 export const fetchUserInfo = (token) => async (dispatch) => {
   dispatch({
@@ -12,6 +12,7 @@ export const login = (token) => async (dispatch) => {
     type: 'LOGIN',
     token: token,
     user: token ? await getUser(token.access_token) : null,
+    whoAmI: token ? await whoAmI(token.access_token) : null,
   })
 }
 

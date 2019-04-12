@@ -18,7 +18,6 @@ class UserInformation extends React.Component {
       expiration: props.selectedUser.expiration,
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
-      is_pi: false,
       datasets: [],
       popup: false,
       message: null,
@@ -59,10 +58,6 @@ class UserInformation extends React.Component {
     this.setState({ google_email: e.target.value });
   }
 
-  setPI = e => {
-    this.setState({ is_pi: e.target.value === 'yes' });
-  }
-
   showPopup = message => {
     this.setState({ popup: true, message });
   }
@@ -101,8 +96,12 @@ class UserInformation extends React.Component {
 
   // TODO: check expiration is date format
   checkFieldsAreValid = () => {
-    const requiredStringFields = ['eracommons','orcid', 'name', 'organization', 'contact_email', 'google_email', 'username', 'expiration'];
-    var invalidFields = [];
+    let requiredStringFields = ['eracommons','orcid', 'name', 'contact_email', 'google_email', 'username'];
+    const requiredDacFields = ['organization', 'expiration'];
+    if (this.props.whoAmI.iam === 'DAC') {
+      requiredStringFields = requiredStringFields.concat(requiredDacFields);
+    }
+    let invalidFields = [];
     for(var i = 0; i < requiredStringFields.length; i++) {
       let val = this.state[requiredStringFields[i]];
       if (!Boolean(val.trim()))
@@ -129,10 +128,14 @@ class UserInformation extends React.Component {
             <label>Name</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.name} onChange={this.setName} />
           </li>
-          <li className='user-info__user-detail'>
-            <label>Organization</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.organization} onChange={this.setOrganization} />
-          </li>
+          {
+            this.props.whoAmI.iam === 'DAC' ?
+            <li className='user-info__user-detail'>
+              <label>Organization</label>
+              <input className='user-info__user-detail-input' type='text' value={this.state.organization} onChange={this.setOrganization} />
+            </li>
+            : null
+          }
           <li className='user-info__user-detail'>
             <label>eRA Commons ID</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
@@ -149,17 +152,14 @@ class UserInformation extends React.Component {
             <label>Google Email</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
           </li>
-          <li className='user-info__user-detail'>
-            <label>Access Expiration Date</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>PI?</label>
-              <select className='user-info__user-detail-dropdown' onChange={this.setPI} defaultValue='no'>
-                <option value='yes'>Yes</option>
-                <option value='no'>No</option>
-              </select>
-          </li>
+          {
+            this.props.whoAmI.iam === 'DAC' ?
+            <li className='user-info__user-detail'>
+              <label>Access Expiration Date</label>
+              <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} />
+            </li>
+            : null
+          }
         </ul>
         <h2>Data Set Access</h2>
         <ul className='user-info__user-access'>
@@ -191,7 +191,7 @@ class UserInformation extends React.Component {
                 }
                 else {
                   this.setState({ addingUser: true }, () => {
-                    postUser(this.state, this.props.token).then(res => {
+                    postUser(this.state, this.props.token, this.props.whoAmI.iam === 'DAC').then(res => {
                       this.props.updateUsers();
                       this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
                       this.setState({ addingUser: false, error: res.message ? res.message : null });
@@ -234,6 +234,11 @@ UserInformation.propTypes = {
     expiration: PropTypes.string,
     contact_email: PropTypes.string,
     google_email: PropTypes.string,
+  }),
+  whoAmI: PropTypes.shape({
+    iam: PropTypes.string,
+    organization: PropTypes.string,
+    datasets: PropTypes.object,
   }),
   allDataSets: PropTypes.array,
   token: PropTypes.object,

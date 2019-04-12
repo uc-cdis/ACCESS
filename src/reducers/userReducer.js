@@ -1,6 +1,7 @@
 const initialState = {
   user: null,
-  token: null
+  token: null,
+  whoAmI: null,
 };
 
 export default (state = initialState, action) => {
@@ -18,6 +19,7 @@ export default (state = initialState, action) => {
     return {
       token: action.token,
       user: action.user,
+      whoAmI: action.whoAmI,
     }
     default:
     return state

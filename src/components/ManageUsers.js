@@ -55,6 +55,7 @@ class ManageUsers extends React.Component {
   }
 
   render() {
+    console.log('manage users props', this.props)
     return (
       <React.Fragment>
         {

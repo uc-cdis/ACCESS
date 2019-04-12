@@ -61,10 +61,7 @@ export const getUser = (token) =>
      },
   })
   .then(res => res.json())
-  .then(data => {
-    // add whoAmI info to the user
-    return whoAmI(token).then(whoRes => Object.assign(data, whoRes));
-  })
+  .then(data => data)
   .catch(error => {
     console.log('ERROR', error)
   });
