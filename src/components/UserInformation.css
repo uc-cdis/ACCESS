@@ -42,6 +42,10 @@
   outline: none;
 }
 
+.user-info__user-detail-input-read-only {
+  background-color: lightgrey;
+}
+
 .user-info__user-detail-dropdown {
   width: 80%;
   height: 34px;

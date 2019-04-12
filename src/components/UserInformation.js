@@ -12,7 +12,7 @@ class UserInformation extends React.Component {
     this.state = {
       name: props.selectedUser.name,
       username: props.selectedUser.username,
-      organization: props.selectedUser.organization,
+      organization: this.props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : this.props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
       expiration: props.selectedUser.expiration,
@@ -128,14 +128,12 @@ class UserInformation extends React.Component {
             <label>Name</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.name} onChange={this.setName} />
           </li>
-          {
-            this.props.whoAmI.iam === 'DAC' ?
-            <li className='user-info__user-detail'>
-              <label>Organization</label>
-              <input className='user-info__user-detail-input' type='text' value={this.state.organization} onChange={this.setOrganization} />
-            </li>
-            : null
-          }
+          <li className='user-info__user-detail'>
+            <label>Organization</label>
+            <input className={
+              'user-info__user-detail-input ' + (this.props.whoAmI.iam === 'PI' ? 'user-info__user-detail-input-read-only' : '')}
+              type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
+          </li>
           <li className='user-info__user-detail'>
             <label>eRA Commons ID</label>
             <input className='user-info__user-detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
@@ -238,7 +236,7 @@ UserInformation.propTypes = {
   whoAmI: PropTypes.shape({
     iam: PropTypes.string,
     organization: PropTypes.string,
-    datasets: PropTypes.object,
+    datasets: PropTypes.array,
   }),
   allDataSets: PropTypes.array,
   token: PropTypes.object,
