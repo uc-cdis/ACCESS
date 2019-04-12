@@ -15,7 +15,7 @@ class UserInformation extends React.Component {
       organization: this.props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : this.props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
-      expiration: props.selectedUser.expiration,
+      expiration: this.props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none',
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
       datasets: props.selectedUser.datasets,
@@ -168,10 +168,8 @@ class UserInformation extends React.Component {
                     <input
                       type='checkbox'
                       key={i}
-                      checked={this.state.datasets.some(
-                        d => d.phsid === project.phsid && d.name === project.name
-                      )}
-                      onChange={() => this.selectDataSet(project)}
+                      checked={this.state.datasets.includes(project.phsid)}
+                      onChange={() => this.selectDataSet(project.phsid)}
                     />
                     {project.name} ({project.phsid})
                   </li>
@@ -182,7 +180,7 @@ class UserInformation extends React.Component {
          {
            this.props.selectedUser.name !== "" ? null : (
              <Button
-              className='user-info__submit-button '
+              className='user-info__submit-button'
               onClick={() => {
                 let validationError = this.checkFieldsAreValid();
                 if (validationError) {
