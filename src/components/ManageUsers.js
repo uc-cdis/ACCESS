@@ -60,12 +60,17 @@ class ManageUsers extends React.Component {
       <React.Fragment>
         {
           this.props.user ?
+            <Button
+              onClick={() => this.props.logout() }
+              buttonType='primary'
+              label={'Log out from '.concat(this.props.user.name)}
+              className='manage-users__logout-button'
+            />
+          : null
+        }
+        {
+          this.props.user ?
             <div className='manage-users'>
-              <Button
-                onClick={() => this.props.logout() }
-                buttonType='primary'
-                label={'Log out from '.concat(this.props.user.name)}
-              />
               <div className='manage-users__tab-bar'>
                 <div
                   tab={0}
