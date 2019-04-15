@@ -19,6 +19,7 @@ class UserTable extends React.Component {
       selectedUser: null,
       deletePopup: false,
       loading: false,
+      editMessage: '',
     };
   }
 
@@ -28,6 +29,14 @@ class UserTable extends React.Component {
 
   closePopup = () => {
     this.setState({ selectedUser: null, deletePopup: false }, () => this.props.updateTable());
+  }
+
+  showEditResultPopup = message => {
+    this.setState({ editMessage: message });
+  }
+
+  closeEditResultPopup = () => {
+    this.setState({ editMessage: '' });
   }
 
   deleteUser = () => {
@@ -40,11 +49,21 @@ class UserTable extends React.Component {
 
   editUser = () => {
     let newInformation = this.selectedUserInformation.current.state;
-    this.setState({ loading: true }, () => {
-      editUser(newInformation, this.props.token)
-        .then(async res => this.props.updateTable())
-        .then(() => this.setState({ selectedUser: null, loading: false }));
-    });
+    let validationError = this.selectedUserInformation.current.checkFieldsAreValid();
+    if (validationError) {
+      this.showEditResultPopup(validationError);
+      this.closePopup();
+    }
+    else {
+      this.setState({ loading: true }, () => {
+        editUser(newInformation, this.props.token)
+          .then(async res => {
+            this.showEditResultPopup(res.message ? res.message : `Successfully edited ${this.state.name}`);
+            this.props.updateTable();
+          })
+          .then(() => this.setState({ selectedUser: null, loading: false }));
+      });
+    }
   }
 
   render() {
@@ -169,6 +188,17 @@ class UserTable extends React.Component {
             >
               <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable} whoAmI={this.props.whoAmI}/>
             </Popup>
+          ) : this.state.editMessage ? (
+            <Popup
+              title='Edit User'
+              message={this.state.editMessage}
+              rightButtons={[
+                {
+                  caption: 'Close',
+                  fn: this.closeEditResultPopup,
+                },
+              ]}
+            />
           ) : null
         }
       </div>

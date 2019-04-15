@@ -207,7 +207,7 @@ class UserInformation extends React.Component {
           )
         }
         {
-          this.state.popup  ?
+          this.state.popup ?
             <Popup
               title='Add User'
               message={this.state.message}
