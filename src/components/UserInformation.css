@@ -46,15 +46,6 @@
   background-color: lightgray;
 }
 
-.user-info__user-detail-dropdown {
-  width: 80%;
-  height: 34px;
-  margin-left: 20px;
-  border: 1px solid var(--g3-color__gray);
-  font-size: 14px;
-  background: white;
-}
-
 .user-info__user-access input[type='checkbox'] {
   margin-right: 10px;
   cursor: pointer;

@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@gen3/ui-component/dist/components/Button';
 import UserInformation from './UserInformation';
+import DatasetInformation from './DatasetInformation';
 import UserTable from './UserTable';
 import { userIsLoggedIn } from '../api/login';
 import { getUsers } from '../api/users';
@@ -86,13 +87,26 @@ class ManageUsers extends React.Component {
                 >
                   Add a New User
                 </div>
+                {
+                  this.props.whoAmI.iam === 'DAC' ?
+                  <div
+                    tab={1}
+                    className={'manage-users__tab'.concat(this.state.selectedTab === 2 ? ' manage-users__tab--selected' : '' )}
+                    onClick={() => this.selectTab(2)}
+                  >
+                    Add a New Dataset
+                  </div>
+                  : null
+                }
               </div>
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
                     <UserTable data={this.state.users} allDataSets={this.state.allDataSets} updateTable={this.updateTable} {...this.props} />
-                  ): (
+                  ): this.state.selectedTab === 1 ? (
                     <UserInformation allDataSets={this.state.allDataSets} updateUsers={this.updateTable} {...this.props} />
+                  ): (
+                    <DatasetInformation updateDatasets={this.updateTable} {...this.props} />
                   )
                 }
               </div>

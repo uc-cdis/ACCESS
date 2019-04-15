@@ -126,7 +126,7 @@ class UserInformation extends React.Component {
           <h2>User Details</h2>
           <li className='user-info__user-detail'>
             <label>Username</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.username} onChange={this.setUserName} />
+            <input className='user-info__user-detail-input' type='text' value={this.state.username} onChange={this.setUserName} readOnly={this.props.selectedUser.username} />
           </li>
           <li className='user-info__user-detail'>
             <label>Name</label>
@@ -156,12 +156,12 @@ class UserInformation extends React.Component {
             this.props.whoAmI.iam === 'DAC' ?
             <li className='user-info__user-detail'>
               <label>Access Expiration Date</label>
-              <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} />
+              <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
             </li>
             : null
           }
         </ul>
-        <h2>Data Set Access</h2>
+        <h2>Dataset Access</h2>
         <ul className='user-info__user-access'>
           {
             allDataSets && allDataSets.map((project, i) => {
@@ -192,7 +192,7 @@ class UserInformation extends React.Component {
                 }
                 else {
                   this.setState({ addingUser: true }, () => {
-                    postUser(this.state, this.props.token, this.props.whoAmI.iam === 'DAC').then(res => {
+                    postUser(this.state, this.props.token).then(res => {
                       this.props.updateUsers();
                       this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
                       this.setState({ addingUser: false, error: res.message ? res.message : null });

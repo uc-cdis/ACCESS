@@ -1,7 +1,7 @@
 import config from '../config';
 
 /**
- Fetches the users in the table.
+ Fetches the datasets.
  */
 export const getDatasets = async (token) => {
   if (token) {
@@ -27,5 +27,26 @@ export const getDatasets = async (token) => {
     });
   } else {
     return [];
+  }
+};
+
+/**
+ Add dataset.
+ */
+export const postDataset = async (dataset, token) => {
+  if (token) {
+    const accessToken = token.access_token;
+    return fetch(`${config.apiHost}/datasets`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${accessToken}`
+      },
+      body: JSON.stringify({name: dataset.name, phsid: dataset.phsid}),
+    })
+    .then((res) => {console.log(res); return res.json()})
+    .then(data => data.reason ? { message: data.reason } : data);
+  } else {
+    return { message: 'No token sent' };
   }
 };

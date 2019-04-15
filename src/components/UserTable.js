@@ -132,7 +132,7 @@ class UserTable extends React.Component {
               title='Delete User'
               message={
                 `Are you sure you want to delete ${this.state.selectedUser.name} at ${this.state.selectedUser.organization}?
-                This action can't be undone.`
+                This action cannot be undone.`
               }
               leftButtons={[
                 {
