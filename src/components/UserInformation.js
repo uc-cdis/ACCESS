@@ -4,7 +4,7 @@ import Button from '@gen3/ui-component/dist/components/Button';
 import Popup from './Popup';
 import { postUser } from '../api/users';
 // import Select from 'react-select';
-import './UserInformation.css';
+import './FormInformation.css';
 
 class UserInformation extends React.Component {
   constructor(props) {
@@ -122,47 +122,47 @@ class UserInformation extends React.Component {
     }
     return (
       <React.Fragment>
-        <ul className='user-info__user-details'>
+        <ul className='form-info__details'>
           <h2>User Details</h2>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>Username</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.username} onChange={this.setUserName} readOnly={this.props.selectedUser.username} />
+            <input className='form-info__detail-input' type='text' value={this.state.username} onChange={this.setUserName} readOnly={this.props.selectedUser.username} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>Name</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.name} onChange={this.setName} />
+            <input className='form-info__detail-input' type='text' value={this.state.name} onChange={this.setName} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>Organization</label>
-            <input className={'user-info__user-detail-input'} type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
+            <input className={'form-info__detail-input'} type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>eRA Commons ID</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
+            <input className='form-info__detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>ORCID</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.orcid} onChange={this.setORCID} />
+            <input className='form-info__detail-input' type='text' value={this.state.orcid} onChange={this.setORCID} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>Contact Email</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.contact_email} onChange={this.setContactEmail} />
+            <input className='form-info__detail-input' type='text' value={this.state.contact_email} onChange={this.setContactEmail} />
           </li>
-          <li className='user-info__user-detail'>
+          <li className='form-info__detail'>
             <label>Google Email</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
+            <input className='form-info__detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
           </li>
           {
             this.props.whoAmI.iam === 'DAC' ?
-            <li className='user-info__user-detail'>
+            <li className='form-info__detail'>
               <label>Access Expiration Date</label>
-              <input className='user-info__user-detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
+              <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
             </li>
             : null
           }
         </ul>
         <h2>Dataset Access</h2>
-        <ul className='user-info__user-access'>
+        <ul className='form-info__user-access'>
           {
             allDataSets && allDataSets.map((project, i) => {
               return (
@@ -183,7 +183,7 @@ class UserInformation extends React.Component {
          {
            this.props.selectedUser.name !== "" ? null : (
              <Button
-              className='user-info__submit-button'
+              className='form-info__submit-button'
               onClick={() => {
                 let validationError = this.checkFieldsAreValid();
                 if (validationError) {

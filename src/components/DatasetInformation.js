@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
 import Popup from './Popup';
 import { postDataset } from '../api/datasets';
-// import Select from 'react-select';
-import './DatasetInformation.css';
+import './FormInformation.css';
 
 class DatasetInformation extends React.Component {
   constructor(props) {
@@ -62,19 +61,19 @@ class DatasetInformation extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <ul className='dataset-info__dataset-details'>
+        <ul className='form-info__details'>
           <h2>Dataset Details</h2>
-          <li className='dataset-info__dataset-detail'>
+          <li className='form-info__detail'>
             <label>Name</label>
-            <input className='dataset-info__dataset-detail-input' type='text' value={this.state.name} onChange={this.setName} />
+            <input className='form-info__detail-input' type='text' value={this.state.name} onChange={this.setName} />
           </li>
-          <li className='dataset-info__dataset-detail'>
+          <li className='form-info__detail'>
             <label>phsid</label>
-            <input className='dataset-info__dataset-detail-input' type='text' value={this.state.phsid} onChange={this.setPhsid} />
+            <input className='form-info__detail-input' type='text' value={this.state.phsid} onChange={this.setPhsid} />
           </li>
         </ul>
           <Button
-          className='dataset-info__submit-button '
+          className='form-info__submit-button '
           onClick={() => {
             let validationError = this.checkFieldsAreValid();
             if (validationError) {

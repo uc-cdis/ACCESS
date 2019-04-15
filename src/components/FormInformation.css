@@ -1,5 +1,5 @@
-.user-info__user-details,
-.user-info__user-access {
+.form-info__details,
+.form-info__user-access {
   width: 100%;
   list-style: none;
   margin: 0;
@@ -8,7 +8,7 @@
   box-sizing: border-box;
 }
 
-.user-info__user-detail {
+.form-info__detail {
   margin: 10px 0;
   display: flex;
   align-items: center;
@@ -16,22 +16,11 @@
   justify-content: space-between;
 }
 
-.user-info__user-detail label {
+.form-info__detail label {
   width: 20%;
 }
 
-.user-info__user-access-item {
-  border: none;
-  list-style: none;
-  margin: 10px 0 0 0;
-  padding: 0 0 0 20px;
-}
-
-.user-info__user-access-item li {
-  margin-bottom: 10px;
-}
-
-.user-info__user-detail-input {
+.form-info__detail-input {
   padding: 10px 10px;
   width: 80%;
   margin-left: 20px;
@@ -42,11 +31,22 @@
   outline: none;
 }
 
-.user-info__user-detail-input:read-only {
+.form-info__detail-input:read-only {
   background-color: lightgray;
 }
 
-.user-info__user-access input[type='checkbox'] {
+.form-info__user-access-item {
+  border: none;
+  list-style: none;
+  margin: 10px 0 0 0;
+  padding: 0 0 0 20px;
+}
+
+.form-info__user-access-item li {
+  margin-bottom: 10px;
+}
+
+.form-info__user-access input[type='checkbox'] {
   margin-right: 10px;
   cursor: pointer;
   border: 1px solid var(--g3-color__gray);
@@ -62,16 +62,16 @@
   vertical-align: middle;
 }
 
-.user-info__user-access input[type='checkbox']:checked {
+.form-info__user-access input[type='checkbox']:checked {
   background: var(--highlight);
 }
 
-.user-info__user-access input[type='checkbox']:disabled {
+.form-info__user-access input[type='checkbox']:disabled {
   background: lightgray;
 }
 
 // defines check in checkbox
-.user-info__user-access input[type='checkbox']:after {
+.form-info__user-access input[type='checkbox']:after {
   content: '';
   width: 15%;
   height: 40%;
@@ -81,14 +81,14 @@
   display: none;
 }
 
-.user-info__user-access input[type='checkbox']:checked:after {
+.form-info__user-access input[type='checkbox']:checked:after {
   display: flex;
   justify-content: center;
   content: '✔';
   color: #fff;
 }
 
-.user-info__submit-button {
+.form-info__submit-button {
   margin: 10px 10px;
   width: 250px;
 }
