@@ -42,8 +42,8 @@
   outline: none;
 }
 
-.user-info__user-detail-input-read-only {
-  background-color: lightgrey;
+.user-info__user-detail-input:read-only {
+  background-color: lightgray;
 }
 
 .user-info__user-detail-dropdown {
@@ -73,6 +73,10 @@
 
 .user-info__user-access input[type='checkbox']:checked {
   background: var(--highlight);
+}
+
+.user-info__user-access input[type='checkbox']:disabled {
+  background: lightgray;
 }
 
 // defines check in checkbox

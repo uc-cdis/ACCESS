@@ -12,10 +12,10 @@ class UserInformation extends React.Component {
     this.state = {
       name: props.selectedUser.name,
       username: props.selectedUser.username,
-      organization: this.props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : this.props.whoAmI.organization,
+      organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
-      expiration: this.props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none',
+      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none',
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
       datasets: props.selectedUser.datasets,
@@ -115,7 +115,11 @@ class UserInformation extends React.Component {
 
   render() {
     console.log('this.props', this.props)
-    const { allDataSets } = this.props;
+    var { allDataSets } = this.props;
+    // users get the same project access as the PI who added them
+    if (this.props.whoAmI.iam === 'PI') {
+      allDataSets = allDataSets.filter(project => this.props.whoAmI.datasets.includes(project.phsid));
+    }
     return (
       <React.Fragment>
         <ul className='user-info__user-details'>
@@ -130,9 +134,7 @@ class UserInformation extends React.Component {
           </li>
           <li className='user-info__user-detail'>
             <label>Organization</label>
-            <input className={
-              'user-info__user-detail-input ' + (this.props.whoAmI.iam === 'PI' ? 'user-info__user-detail-input-read-only' : '')}
-              type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
+            <input className={'user-info__user-detail-input'} type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
           </li>
           <li className='user-info__user-detail'>
             <label>eRA Commons ID</label>
@@ -168,8 +170,9 @@ class UserInformation extends React.Component {
                     <input
                       type='checkbox'
                       key={i}
-                      checked={this.state.datasets.includes(project.phsid)}
+                      checked={this.state.datasets.includes(project.phsid) || this.props.whoAmI.iam === 'PI'}
                       onChange={() => this.selectDataSet(project.phsid)}
+                      disabled={this.props.whoAmI.iam === 'PI'}
                     />
                     {project.name} ({project.phsid})
                   </li>
