@@ -60,17 +60,17 @@ class ManageUsers extends React.Component {
     return (
       <React.Fragment>
         {
-          this.props.user ?
+          this.props.user && (
             <Button
               onClick={() => this.props.logout() }
               buttonType='primary'
               label={'Log out from '.concat(this.props.user.name)}
               className='manage-users__logout-button'
             />
-          : null
+          )
         }
         {
-          this.props.user ?
+          this.props.user && (
             <div className='manage-users'>
               <div className='manage-users__tab-bar'>
                 <div
@@ -88,15 +88,15 @@ class ManageUsers extends React.Component {
                   Add a New User
                 </div>
                 {
-                  this.props.whoAmI.iam === 'DAC' ?
-                  <div
-                    tab={1}
-                    className={'manage-users__tab'.concat(this.state.selectedTab === 2 ? ' manage-users__tab--selected' : '' )}
-                    onClick={() => this.selectTab(2)}
-                  >
-                    Add a New Dataset
-                  </div>
-                  : null
+                  this.props.whoAmI.iam === 'DAC' && (
+                    <div
+                      tab={1}
+                      className={'manage-users__tab'.concat(this.state.selectedTab === 2 ? ' manage-users__tab--selected' : '' )}
+                      onClick={() => this.selectTab(2)}
+                    >
+                      Add a New Dataset
+                    </div>
+                  )
                 }
               </div>
               <div className='manage-users__content'>
@@ -111,7 +111,7 @@ class ManageUsers extends React.Component {
                 }
               </div>
             </div>
-          : null
+          )
         }
       </React.Fragment>
     )

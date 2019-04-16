@@ -152,7 +152,7 @@ class UserTable extends React.Component {
             </AutoSizer>
         }
         {
-          this.state.selectedUser && this.state.deletePopup ? (
+          this.state.selectedUser && this.state.deletePopup && (
             <Popup
               title='Delete User'
               message={
@@ -172,10 +172,10 @@ class UserTable extends React.Component {
                 },
               ]}
             />
-          ) : null
+          )
         }
         {
-          this.state.selectedUser && !this.state.deletePopup && !this.state.loading ? (
+          this.state.selectedUser && !this.state.deletePopup && !this.state.loading && (
             <Popup
               title='Edit User'
               message=''
@@ -194,10 +194,10 @@ class UserTable extends React.Component {
             >
               <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable} whoAmI={this.props.whoAmI}/>
             </Popup>
-          ) : null
+          )
         }
         {
-          this.state.message ? (
+          this.state.message && (
             <Popup
               title={this.state.deletePopup ? 'Delete User' : 'Edit User'}
               message={this.state.message}
@@ -208,7 +208,7 @@ class UserTable extends React.Component {
                 },
               ]}
             />
-          ) : null
+          )
         }
       </div>
     )

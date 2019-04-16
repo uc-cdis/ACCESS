@@ -16,7 +16,7 @@ class Homepage extends Component {
     return (
       <React.Fragment>
         {
-          !!!this.props.token ?
+          !!!this.props.token && (
             <div className='homepage__login'>
               <Button
                 onClick={() => loginRedirect(window.location.href)}
@@ -24,7 +24,7 @@ class Homepage extends Component {
                 label={'Login'}
               />
             </div>
-          : null
+          )
         }
       </React.Fragment>
     );

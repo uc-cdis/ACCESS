@@ -94,7 +94,7 @@ class DatasetInformation extends React.Component {
           isPending={this.state.addingDataset}
         />
         {
-          this.state.popup  ?
+          this.state.popup && (
             <Popup
               title='Add Dataset'
               message={this.state.message}
@@ -105,7 +105,7 @@ class DatasetInformation extends React.Component {
                 },
               ]}
             />
-          : null
+          )
         }
       </React.Fragment>
     )

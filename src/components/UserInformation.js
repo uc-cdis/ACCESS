@@ -153,12 +153,12 @@ class UserInformation extends React.Component {
             <input className='form-info__detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
           </li>
           {
-            this.props.whoAmI.iam === 'DAC' ?
+            this.props.whoAmI.iam === 'DAC' && (
               <li className='form-info__detail'>
                 <label>Access Expiration Date</label>
                 <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
               </li>
-              : null
+            )
           }
         </ul>
         <h2>Dataset Access</h2>
@@ -207,7 +207,7 @@ class UserInformation extends React.Component {
           )
         }
         {
-          this.state.popup ?
+          this.state.popup && (
             <Popup
               title='Add User'
               message={this.state.message}
@@ -218,7 +218,7 @@ class UserInformation extends React.Component {
                 },
               ]}
             />
-            : null
+          )
         }
       </React.Fragment>
     )
