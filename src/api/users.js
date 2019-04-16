@@ -74,24 +74,18 @@ export const editUser = async (user, token) => {
 /**
  Delete user/
  */
-
-export const deleteUser = async (user, token) => {
+export const deleteUser = async (username, token) => {
   if (token) {
     const accessToken = token.access_token;
-    return fetch(`${config.apiHost}/user/${user}`, {
+    return fetch(`${config.apiHost}/user/${username}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-    }).then(res => res.json())
-    .then(({ status, data, message }) => {
-      if (status === 200) {
-        return true;
-      }
-      return message;
-    });
+    }).then((res) => res.json())
+    .then(data => data.reason ? { message: data.reason } : data);
   } else {
-    return false;
+    return { message: 'No token sent' };
   }
 };

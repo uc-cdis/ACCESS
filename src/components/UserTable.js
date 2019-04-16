@@ -19,10 +19,11 @@ class UserTable extends React.Component {
       selectedUser: null,
       deletePopup: false,
       loading: false,
-      editMessage: '',
+      message: '',
     };
   }
 
+  // edit/delete pop up
   openPopup = (selectedUser, deletePopup) => {
     this.setState({ selectedUser, deletePopup });
   }
@@ -31,18 +32,22 @@ class UserTable extends React.Component {
     this.setState({ selectedUser: null, deletePopup: false }, () => this.props.updateTable());
   }
 
-  showEditResultPopup = message => {
-    this.setState({ editMessage: message });
+  // edit/delete result pop up
+  showResultPopup = (message, isDelete) => {
+    this.setState({ message, deletePopup: isDelete });
   }
 
-  closeEditResultPopup = () => {
-    this.setState({ editMessage: '' });
+  closeResultPopup = () => {
+    this.setState({ message: '', deletePopup: false });
   }
 
   deleteUser = () => {
     this.setState({ deletePopup: false, loading: true }, () => {
       deleteUser(this.state.selectedUser.username, this.props.token)
-        .then(async res => this.props.updateTable())
+        .then(async res => {
+          this.showResultPopup(res.message ? `Error: ${res.message}` : `Successfully deleted user ${this.state.selectedUser.name} (${this.state.selectedUser.username}).`, true);
+          this.props.updateTable();
+        })
         .then(() => this.setState({ selectedUser: null, loading: false }));
     });
   }
@@ -51,22 +56,23 @@ class UserTable extends React.Component {
     let newInformation = this.selectedUserInformation.current.state;
     let validationError = this.selectedUserInformation.current.checkFieldsAreValid();
     if (validationError) {
-      this.showEditResultPopup(validationError);
+      this.showResultPopup(`Error: ${validationError}`, false);
       this.closePopup();
     }
     else {
       this.setState({ loading: true }, () => {
         editUser(newInformation, this.props.token)
-          .then(async res => {
-            this.showEditResultPopup(res.message ? res.message : `Successfully edited ${this.state.name}`);
-            this.props.updateTable();
-          })
-          .then(() => this.setState({ selectedUser: null, loading: false }));
+        .then(async res => {
+          this.showResultPopup(res.message ? `Error: ${res.message}` : `Successfully updated user ${this.state.selectedUser.name} (${this.state.selectedUser.username}).`, false);
+          this.props.updateTable();
+        })
+        .then(() => this.setState({ selectedUser: null, loading: false }));
       });
     }
   }
 
   render() {
+    console.log('STATE', this.state)
     const { data, allDataSets } = this.props;
     const tableSize = (data.length + 1) * ROW_HEIGHT;
     return (
@@ -188,14 +194,17 @@ class UserTable extends React.Component {
             >
               <UserInformation ref={this.selectedUserInformation} selectedUser={this.state.selectedUser} allDataSets={allDataSets} updateUsers={this.props.updateTable} whoAmI={this.props.whoAmI}/>
             </Popup>
-          ) : this.state.editMessage ? (
+          ) : null
+        }
+        {
+          this.state.message ? (
             <Popup
-              title='Edit User'
-              message={this.state.editMessage}
+              title={this.state.deletePopup ? 'Delete User' : 'Edit User'}
+              message={this.state.message}
               rightButtons={[
                 {
                   caption: 'Close',
-                  fn: this.closeEditResultPopup,
+                  fn: this.closeResultPopup,
                 },
               ]}
             />

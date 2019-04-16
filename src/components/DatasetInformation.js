@@ -43,7 +43,6 @@ class DatasetInformation extends React.Component {
     }
   }
 
-  // TODO: util function?
   checkFieldsAreValid = () => {
     let requiredStringFields = ['name', 'phsid'];
     let invalidFields = [];
@@ -84,7 +83,7 @@ class DatasetInformation extends React.Component {
               this.setState({ addingDataset: true }, () => {
                 postDataset(this.state, this.props.token).then(res => {
                   this.props.updateDatasets();
-                  this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
+                  this.showPopup(res.message ? `Error: ${res.message}` : `Successfully added ${this.state.name}.`);
                   this.setState({ addingDataset: false, error: res.message ? res.message : null });
                 })
               });

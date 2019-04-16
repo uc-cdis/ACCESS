@@ -96,13 +96,13 @@ class UserInformation extends React.Component {
 
   // TODO: check expiration is date format
   checkFieldsAreValid = () => {
-    let requiredStringFields = ['eracommons','orcid', 'name', 'contact_email', 'google_email', 'username'];
+    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'username'];
     const requiredDacFields = ['organization', 'expiration'];
     if (this.props.whoAmI.iam === 'DAC') {
       requiredStringFields = requiredStringFields.concat(requiredDacFields);
     }
     let invalidFields = [];
-    for(var i = 0; i < requiredStringFields.length; i++) {
+    for (var i = 0; i < requiredStringFields.length; i++) {
       let val = this.state[requiredStringFields[i]];
       if (!Boolean(val.trim()))
         invalidFields.push(requiredStringFields[i])
@@ -154,11 +154,11 @@ class UserInformation extends React.Component {
           </li>
           {
             this.props.whoAmI.iam === 'DAC' ?
-            <li className='form-info__detail'>
-              <label>Access Expiration Date</label>
-              <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
-            </li>
-            : null
+              <li className='form-info__detail'>
+                <label>Access Expiration Date</label>
+                <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
+              </li>
+              : null
           }
         </ul>
         <h2>Dataset Access</h2>
@@ -166,23 +166,23 @@ class UserInformation extends React.Component {
           {
             allDataSets && allDataSets.map((project, i) => {
               return (
-                  <li key={i}>
-                    <input
-                      type='checkbox'
-                      key={i}
-                      checked={this.state.datasets.includes(project.phsid) || this.props.whoAmI.iam === 'PI'}
-                      onChange={() => this.selectDataSet(project.phsid)}
-                      disabled={this.props.whoAmI.iam === 'PI'}
-                    />
-                    {project.name} ({project.phsid})
+                <li key={i}>
+                  <input
+                    type='checkbox'
+                    key={i}
+                    checked={this.state.datasets.includes(project.phsid) || this.props.whoAmI.iam === 'PI'}
+                    onChange={() => this.selectDataSet(project.phsid)}
+                    disabled={this.props.whoAmI.iam === 'PI'}
+                  />
+                  {project.name} ({project.phsid})
                   </li>
               )
             })
           }
-         </ul>
-         {
-           this.props.selectedUser.name !== "" ? null : (
-             <Button
+        </ul>
+        {
+          this.props.selectedUser.name !== "" ? null : (
+            <Button
               className='form-info__submit-button'
               onClick={() => {
                 let validationError = this.checkFieldsAreValid();
@@ -194,7 +194,7 @@ class UserInformation extends React.Component {
                   this.setState({ addingUser: true }, () => {
                     postUser(this.state, this.props.token).then(res => {
                       this.props.updateUsers();
-                      this.showPopup(res.message ? res.message : `Successfully added ${this.state.name}`);
+                      this.showPopup(res.message ? `Error: ${res.message}` : `Successfully added user ${this.state.name} (${this.state.username})${this.state.datasets.length > 0 ? ' and granted access to ' + this.state.datasets.join(', ') : ''}.`);
                       this.setState({ addingUser: false, error: res.message ? res.message : null });
                     })
                   });
@@ -218,7 +218,7 @@ class UserInformation extends React.Component {
                 },
               ]}
             />
-          : null
+            : null
         }
       </React.Fragment>
     )
