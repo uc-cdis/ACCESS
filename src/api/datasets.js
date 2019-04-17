@@ -42,7 +42,7 @@ export const postDataset = async (dataset, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-      body: JSON.stringify({name: dataset.name, phsid: dataset.phsid}),
+      body: JSON.stringify({name: dataset.name.trim(), phsid: dataset.phsid.trim()}),
     })
     .then((res) => {console.log(res); return res.json()})
     .then(data => data.reason ? { message: data.reason } : data);

@@ -9,11 +9,13 @@ import UserInformation from './UserInformation';
 import { getUsersForPI, deleteUser, editUser } from '../api/users';
 import './UserTable.css';
 
-const MAX_TABLE_HEIGHT = 800;
 const ROW_HEIGHT = 120;
+const MAX_TABLE_HEIGHT = 800;
 
-const MAX_EXPAND_TABLE_HEIGHT = 200;
 const EXPAND_ROW_HEIGHT = 60;
+const MAX_EXPAND_TABLE_HEIGHT = EXPAND_ROW_HEIGHT * 4;
+
+var piToUsersCache = {};
 
 class UserTable extends React.Component {
   constructor(props) {
@@ -90,7 +92,7 @@ class UserTable extends React.Component {
  */
   userRowRenderer = (params) => {
     const { style, key, rowData } = params;
-    if (rowData.username != this.state.expandedUser) {
+    if (rowData.username !== this.state.expandedUser) {
       return defaultTableRowRenderer(params);
     }
     else {
@@ -104,11 +106,15 @@ class UserTable extends React.Component {
             style: { height: ROW_HEIGHT }
           })}
 
-          {this.state.expandedUserChildren.length == 0 ?
-            <div style={{ padding: '10px', fontStyle: 'italic' }}>
-              This PI has not added any users yet.
-            </div>
-          :
+          {
+            this.state.loadingPiUsers ?
+              <Spinner />
+            :
+            this.state.expandedUserChildren.length === 0 ?
+              <div style={{ padding: '10px', fontStyle: 'italic' }}>
+                This PI has not added any users yet.
+              </div>
+            :
           // <AutoSizer disableHeight>
           //   {({ width }) => (
             <Table // users added by this PI
@@ -171,16 +177,19 @@ class UserTable extends React.Component {
 
   toggleRow = async (e) => {
     const pi = e.rowData.username;
-    if (this.state.expandedUser === pi) {
+    if (this.state.expandedUser === pi) { // close the expanded row
       this.setState({expandedUser: null, expandedUserChildren: []})
     }
-    else {
-      await getUsersForPI(this.props.token, pi).then(res => {
-        this.setState({
-          expandedUser: pi,
-          expandedUserChildren: res // TODO: cache this
-        })
-      })
+    else { // expand a row
+      this.setState({expandedUser: pi, expandedUserChildren: [], loadingPiUsers: true})
+      this._table.current.recomputeRowHeights(); // spinner will be displayed
+      if (!piToUsersCache[pi]) {
+        piToUsersCache[pi] = await getUsersForPI(this.props.token, pi);
+      }
+      this.setState({
+        loadingPiUsers: false,
+        expandedUserChildren: piToUsersCache[pi]
+      });
     }
     this._table.current.recomputeRowHeights();
   }

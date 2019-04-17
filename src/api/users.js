@@ -73,7 +73,7 @@ export const postUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-      body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: user.datasets}),
+      body: JSON.stringify({username: user.username.trim(), name: user.name.trim(), eracommons: user.eracommons.trim(), orcid: user.orcid.trim(), organization: user.organization.trim(), contact_email: user.contact_email.trim(), google_email: user.google_email.trim(), expiration: user.expiration.trim(), datasets: user.datasets}),
     })
     .then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);
@@ -94,7 +94,7 @@ export const editUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-      body: JSON.stringify({username: user.username, name: user.name, eracommons: user.eracommons, orcid: user.orcid, organization: user.organization, contact_email: user.contact_email, google_email: user.google_email, expiration: user.expiration, datasets: user.datasets}),
+      body: JSON.stringify({username: user.username.trim(), name: user.name.trim(), eracommons: user.eracommons.trim(), orcid: user.orcid.trim(), organization: user.organization.trim(), contact_email: user.contact_email.trim(), google_email: user.google_email.trim(), expiration: user.expiration.trim(), datasets: user.datasets}),
     }).then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);
   } else {

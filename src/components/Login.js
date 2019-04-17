@@ -16,7 +16,7 @@ class Login extends React.Component {
   }
 
   fetchUser = async (token) => {
-    const user = this.props.fetchUserInfo(token)
+    this.props.fetchUserInfo(token)
   }
 
   handleLoginCompletion = () => {
