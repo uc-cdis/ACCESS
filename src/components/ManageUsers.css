@@ -31,8 +31,11 @@
 }
 
 .manage-users__tab--selected {
-  background-color: var(--primary);
+  background-color: var(--highlight);
   color: #fff;
+  border-top: 2px solid var(--highlight);
+  border-left: 2px solid var(--highlight);
+  border-right: 2px solid var(--highlight);
 }
 
 .manage-users__content {
