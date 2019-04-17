@@ -22,7 +22,7 @@ export const getDatasets = async (token) => {
       return data;
     })
     .catch(error => {
-      console.log('ERROR', error);
+      console.error('ERROR', error);
       return error;
     });
   } else {

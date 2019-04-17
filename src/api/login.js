@@ -41,7 +41,7 @@ export const whoAmI = async (accessToken) => {
       return data;
     })
     .catch(error => {
-      console.log('ERROR', error);
+      console.error('ERROR', error);
       return error;
     });
   } else {
@@ -63,7 +63,7 @@ export const getUser = (token) =>
   .then(res => res.json())
   .then(data => data)
   .catch(error => {
-    console.log('ERROR', error)
+    console.error('ERROR', error)
   });
 
 /**

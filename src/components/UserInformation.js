@@ -15,7 +15,7 @@ class UserInformation extends React.Component {
       organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
-      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none', // TODO: default date format
+      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : '2000-01-01', // fake expiration: user expires when PI expires
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
       datasets: props.selectedUser.datasets,
@@ -69,12 +69,12 @@ class UserInformation extends React.Component {
         message: null,
         username: '',
         name: '',
-        organization: '',
+        organization: this.props.whoAmI.iam === 'DAC' ? '' : this.props.whoAmI.organization,
         eracommons: '',
         orcid: '',
         contact_email: '',
         google_email: '',
-        expiration: '',
+        expiration: this.props.whoAmI.iam === 'DAC' ? '' : '2000-01-01',
         datasets: [],
       });
     } else {
@@ -94,7 +94,6 @@ class UserInformation extends React.Component {
     }
   }
 
-  // TODO: check expiration is date format
   checkFieldsAreValid = () => {
     let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'username'];
     const requiredDacFields = ['organization', 'expiration'];
@@ -156,7 +155,7 @@ class UserInformation extends React.Component {
             this.props.whoAmI.iam === 'DAC' && (
               <li className='form-info__detail'>
                 <label>Access Expiration Date</label>
-                <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='mm-dd-yyyy' />
+                <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='YYYY-MM-DD' />
               </li>
             )
           }

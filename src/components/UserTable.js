@@ -175,7 +175,7 @@ class UserTable extends React.Component {
       this.setState({expandedUser: null, expandedUserChildren: []})
     }
     else {
-      await getUsersForPI(this.props.token, pi.username).then(res => {
+      await getUsersForPI(this.props.token, pi).then(res => {
         this.setState({
           expandedUser: pi,
           expandedUserChildren: res // TODO: cache this
@@ -244,11 +244,15 @@ class UserTable extends React.Component {
                     dataKey='google_email'
                     width={200}
                   />
-                  <Column
-                    label='Expiration'
-                    dataKey='expiration'
-                    width={200}
-                  />
+                  {
+                    this.props.whoAmI.iam === 'DAC' && (
+                      <Column
+                        label='Expiration'
+                        dataKey='expiration'
+                        width={200}
+                      />
+                    )
+                  }
                   <Column
                     label='Actions'
                     dataKey='actions'

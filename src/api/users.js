@@ -21,29 +21,22 @@ export const getUsers = async (token) => {
       return data;
     })
     .catch(error => {
-      console.log('ERROR', error);
+      console.error('ERROR', error);
       return error;
     });
   } else {
+    console.error('No token sent');
     return [];
   }
 };
 
 /**
  Fetches the users added by a PI.
- TODO :)
  */
 export const getUsersForPI = async (token, piUsername) => {
-  return [
-    {name: 'name1', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-    {name: 'name2', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-    {name: 'name3', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-    {name: 'name4', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-    {name: 'name5', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-  ].slice(0, Math.floor(Math.random() * 6));
   if (token) {
     const accessToken = token.access_token;
-    return fetch(`${config.apiHost}/users`, {
+    return fetch(`${config.apiHost}/users/${piUsername}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -58,10 +51,11 @@ export const getUsersForPI = async (token, piUsername) => {
       return data;
     })
     .catch(error => {
-      console.log('ERROR', error);
+      console.error('ERROR', error);
       return error;
     });
   } else {
+    console.error('No token sent');
     return [];
   }
 };
