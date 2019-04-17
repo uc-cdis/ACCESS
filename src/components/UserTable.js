@@ -33,7 +33,8 @@ class UserTable extends React.Component {
   }
 
   // edit/delete pop up
-  openPopup = (selectedUser, deletePopup) => {
+  openPopup = (event, selectedUser, deletePopup) => {
+    event.stopPropagation(); // prevents expand row on button click
     this.setState({ selectedUser, deletePopup });
   }
 
@@ -62,17 +63,17 @@ class UserTable extends React.Component {
   }
 
   editUser = () => {
-    let newInformation = this.selectedUserInformation.current.state;
     let validationError = this.selectedUserInformation.current.checkFieldsAreValid();
     if (validationError) {
       this.showResultPopup(`Error: ${validationError}`, false);
       this.closePopup();
     }
     else {
+      let newInformation = this.selectedUserInformation.current.state;
       this.setState({ loading: true }, () => {
         editUser(newInformation, this.props.token)
         .then(async res => {
-          this.showResultPopup(res.message ? `Error: ${res.message}` : `Successfully updated user ${this.state.selectedUser.name} (${this.state.selectedUser.username}).`, false);
+          this.showResultPopup(res.message ? `Error: ${res.message}` : `Successfully updated user ${newInformation.name} (${newInformation.username}).`, false);
           this.props.updateTable();
         })
         .then(() => this.setState({ selectedUser: null, loading: false }));
@@ -95,7 +96,7 @@ class UserTable extends React.Component {
     else {
       return (
         <div
-          style={{ ...style, display: "flex", flexDirection: "column" }}
+          style={{ ...style, display: 'flex', flexDirection: 'column' }}
           key={key}
         >
           {defaultTableRowRenderer({ // PI user row
@@ -104,10 +105,12 @@ class UserTable extends React.Component {
           })}
 
           {this.state.expandedUserChildren.length == 0 ?
-            <div style={{ padding: "10px", fontStyle: "italic" }}>
+            <div style={{ padding: '10px', fontStyle: 'italic' }}>
               This PI has not added any users yet.
             </div>
           :
+          // <AutoSizer disableHeight>
+          //   {({ width }) => (
             <Table // users added by this PI
               width={1300} // width of the first 6 columns of main table
               height={this.expandTableSize}
@@ -115,7 +118,7 @@ class UserTable extends React.Component {
               rowHeight={EXPAND_ROW_HEIGHT}
               rowCount={this.state.expandedUserChildren.length}
               rowGetter={({ index }) => this.state.expandedUserChildren[index]}
-              rowStyle={{backgroundColor: "lightgray"}}
+              rowStyle={{backgroundColor: 'var(--g3-color__silver)', borderColor: 'white'}}
             >
               <Column
                 label='Username'
@@ -123,9 +126,9 @@ class UserTable extends React.Component {
                 width={200}
               />
               <Column
-                width={300}
                 label='Name'
                 dataKey='name'
+                width={300}
               />
               <Column
                 label='Organization'
@@ -147,7 +150,19 @@ class UserTable extends React.Component {
                 dataKey='google_email'
                 width={200}
               />
+              {/* <Column
+                label='Expiration'
+                dataKey='expiration'
+                width={200}
+              />
+              <Column
+                label='Actions'
+                dataKey='actions'
+                width={200}
+              /> */}
             </Table>
+            //   )}
+            // </AutoSizer>
           }
         </div>
       );
@@ -205,9 +220,9 @@ class UserTable extends React.Component {
                     width={200}
                   />
                   <Column
-                    width={300}
                     label='Name'
                     dataKey='name'
+                    width={300}
                   />
                   <Column
                     label='Organization'
@@ -242,13 +257,13 @@ class UserTable extends React.Component {
                       <React.Fragment>
                         <Button
                           className='user-table__button'
-                          onClick={() => this.openPopup(data[rowIndex], false)}
+                          onClick={(event) => this.openPopup(event, data[rowIndex], false)}
                           buttonType='primary'
                           label='Edit'
                         />
                         <Button
                           className='user-table__button'
-                          onClick={() => this.openPopup(data[rowIndex], true)}
+                          onClick={(event) => this.openPopup(event, data[rowIndex], true)}
                           buttonType='primary'
                           label='Delete'
                         />

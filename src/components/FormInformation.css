@@ -32,7 +32,7 @@
 }
 
 .form-info__detail-input:read-only {
-  background-color: lightgray;
+  background-color: var(--g3-color__silver);
 }
 
 .form-info__user-access-item {
@@ -67,7 +67,7 @@
 }
 
 .form-info__user-access input[type='checkbox']:disabled {
-  background: lightgray;
+  background: var(--g3-color__silver);
 }
 
 // defines check in checkbox

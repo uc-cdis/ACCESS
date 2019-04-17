@@ -15,7 +15,7 @@ class UserInformation extends React.Component {
       organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
-      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none',
+      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : 'none', // TODO: default date format
       contact_email: props.selectedUser.contact_email,
       google_email: props.selectedUser.google_email,
       datasets: props.selectedUser.datasets,
@@ -181,7 +181,7 @@ class UserInformation extends React.Component {
           }
         </ul>
         {
-          this.props.selectedUser.name !== "" ? null : (
+          this.props.selectedUser.name !== '' ? null : (
             <Button
               className='form-info__submit-button'
               onClick={() => {
