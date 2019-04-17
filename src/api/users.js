@@ -40,7 +40,7 @@ export const getUsersForPI = async (token, piUsername) => {
     {name: 'name3', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
     {name: 'name4', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
     {name: 'name5', organization: 'organization', username: 'username', eracommons: 'eracommons', google_email: 'google_email', contact_email: 'contact_email', orcid: 'orcid'},
-  ];
+  ].slice(0, Math.floor(Math.random() * 6));
   if (token) {
     const accessToken = token.access_token;
     return fetch(`${config.apiHost}/users`, {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
 import { AutoSizer, Column, Table, defaultTableRowRenderer } from 'react-virtualized';
@@ -12,21 +12,23 @@ import './UserTable.css';
 const MAX_TABLE_HEIGHT = 800;
 const ROW_HEIGHT = 120;
 
-const MAX_EXPAND_TABLE_HEIGHT = 400;
+const MAX_EXPAND_TABLE_HEIGHT = 200;
 const EXPAND_ROW_HEIGHT = 60;
 
 class UserTable extends React.Component {
   constructor(props) {
     super(props);
     this.selectedUserInformation = React.createRef();
-    this._table = React.createRef(); // TODO remove?
+    this._table = React.createRef();
+    this.userTableSize = 0;
+    this.expandTableSize = 0;
     this.state = {
       selectedUser: null,
       deletePopup: false,
       loading: false,
       message: '',
-      expandedUser: null,
-      expandedUserChildren: [],
+      expandedUser: null, //username of the PI whose row was clicked
+      expandedUserChildren: [], //list of users added by this PI
     };
   }
 
@@ -78,8 +80,6 @@ class UserTable extends React.Component {
     }
   }
 
-  userRowGetter = ({ index }) => this.props.data[index % this.props.data.length];
-
 /**
  If the current user is a PI: renders the user row (cannot expand).
  If the current user is a DAC:
@@ -103,60 +103,56 @@ class UserTable extends React.Component {
             style: { height: ROW_HEIGHT }
           })}
 
-          <Table // users added by this PI
-            width={1300} // width of the first 6 columns of main table
-            height={Math.min(this.state.expandedUserChildren.length * EXPAND_ROW_HEIGHT, MAX_EXPAND_TABLE_HEIGHT - ROW_HEIGHT)}
-            disableHeader={true}
-            rowHeight={EXPAND_ROW_HEIGHT}
-            rowCount={this.state.expandedUserChildren.length}
-            rowGetter={({ index }) => this.state.expandedUserChildren[index]}
-            rowStyle={{backgroundColor: "lightgray"}}
-          >
-            <Column
-              label='Username'
-              dataKey='username'
-              width={200}
-            />
-            <Column
-              width={300}
-              label='Name'
-              dataKey='name'
-            />
-            <Column
-              label='Organization'
-              dataKey='organization'
-              width={200}
-            />
-            <Column
-              label='Contact Email'
-              dataKey='contact_email'
-              width={200}
-            />
-            <Column
-              label='eRA Commons'
-              dataKey='eracommons'
-              width={200}
-            />
-            <Column
-              label='Google Email'
-              dataKey='google_email'
-              width={200}
-            />
-          </Table>
+          {this.state.expandedUserChildren.length == 0 ?
+            <div style={{ padding: "10px", fontStyle: "italic" }}>
+              This PI has not added any users yet.
+            </div>
+          :
+            <Table // users added by this PI
+              width={1300} // width of the first 6 columns of main table
+              height={this.expandTableSize}
+              disableHeader={true}
+              rowHeight={EXPAND_ROW_HEIGHT}
+              rowCount={this.state.expandedUserChildren.length}
+              rowGetter={({ index }) => this.state.expandedUserChildren[index]}
+              rowStyle={{backgroundColor: "lightgray"}}
+            >
+              <Column
+                label='Username'
+                dataKey='username'
+                width={200}
+              />
+              <Column
+                width={300}
+                label='Name'
+                dataKey='name'
+              />
+              <Column
+                label='Organization'
+                dataKey='organization'
+                width={200}
+              />
+              <Column
+                label='Contact Email'
+                dataKey='contact_email'
+                width={200}
+              />
+              <Column
+                label='eRA Commons'
+                dataKey='eracommons'
+                width={200}
+              />
+              <Column
+                label='Google Email'
+                dataKey='google_email'
+                width={200}
+              />
+            </Table>
+          }
         </div>
       );
     }
   };
-
-  getUsersChildren = (users) => {
-    var allUsers = [];
-    users.map(async pi => {
-      allUsers.push(pi);
-      await getUsersForPI(this.props.token, pi.username).then(children => allUsers.push(children));
-    });
-    return allUsers;
-    // getUsersForPI().then(usersResults => this.setState({ users: usersResults }));
-  }
 
   toggleRow = async (e) => {
     const pi = e.rowData.username;
@@ -172,32 +168,17 @@ class UserTable extends React.Component {
       })
     }
     this._table.current.recomputeRowHeights();
-    // this._table.current.forceUpdateGrid();
-  }
-
-  test = (data, index) => {
-    const username = data[index].username;
-    if (this.state.expandedUser == data[index].parent) {
-
-    }
-    return data[index];
-    // this.setState({expandedUser: row.username});
   }
 
   getRowHeight = (params) => {
-    if (this.props.data[params.index].username === this.state.expandedUser) {
-      return Math.min(ROW_HEIGHT + this.state.expandedUserChildren.length * EXPAND_ROW_HEIGHT, MAX_EXPAND_TABLE_HEIGHT);
-    }
-    return ROW_HEIGHT;
+    const isExpanded = this.props.data[params.index].username === this.state.expandedUser;
+    return ROW_HEIGHT + (isExpanded ? this.expandTableSize : 0);
   }
 
   render() {
-    // var { data, allDataSets } = this.props;
-    // data = this.getUsersChildren(data);
     const { data, allDataSets } = this.props;
-    const tableSize = (data.length + 1) * ROW_HEIGHT;
-    console.log(tableSize < MAX_TABLE_HEIGHT ? tableSize : MAX_TABLE_HEIGHT)
-
+    this.userTableSize = Math.min((data.length + 1) * ROW_HEIGHT, MAX_TABLE_HEIGHT);
+    this.expandTableSize = this.state.expandedUser ? Math.min(Math.max(this.state.expandedUserChildren.length, 1) * EXPAND_ROW_HEIGHT, MAX_EXPAND_TABLE_HEIGHT) : 0;
     return (
       <div className='user-table'>
         {
@@ -209,14 +190,13 @@ class UserTable extends React.Component {
                 <Table
                   ref={this._table}
                   width={width}
-                  height={Math.max(Math.min(tableSize, MAX_TABLE_HEIGHT), ROW_HEIGHT + this.state.expandedUserChildren.length * EXPAND_ROW_HEIGHT)}
+                  height={this.userTableSize + this.expandTableSize}
                   headerHeight={ROW_HEIGHT}
-                  rowHeight={this.getRowHeight} //{ROW_HEIGHT}
+                  rowHeight={this.getRowHeight}
                   rowCount={data.length}
-                  rowGetter={this.userRowGetter} //{({ index }) => data[index]}
-                  // rowGetter={({ index }) => this.test(data, index)}
-                  // rowRenderer={({ index }) => this.userRowRenderer(data[index])}
-                  onRowClick={this.toggleRow}
+                  rowGetter={({ index }) => data[index]}
+                  // only DACs can expand the user rows:
+                  onRowClick={this.props.whoAmI.iam === 'DAC' ? this.toggleRow : null}
                   rowRenderer={this.userRowRenderer}
                 >
                   <Column
@@ -259,7 +239,6 @@ class UserTable extends React.Component {
                     dataKey='actions'
                     width={200}
                     cellRenderer={({ rowIndex }) => (
-                      // data[rowIndex].username == 'pribeyre63@gmail.com' ?
                       <React.Fragment>
                         <Button
                           className='user-table__button'
@@ -274,7 +253,6 @@ class UserTable extends React.Component {
                           label='Delete'
                         />
                       </React.Fragment>
-                      // : null
                     )}
                   />
                 </Table>
