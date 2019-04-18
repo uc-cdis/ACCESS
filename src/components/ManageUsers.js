@@ -88,7 +88,7 @@ class ManageUsers extends React.Component {
                   Add a New User
                 </div>
                 {
-                  this.props.whoAmI.iam === 'DAC' && (
+                  false && this.props.whoAmI.iam === 'DAC' && ( // disabled
                     <div
                       tab={1}
                       className={'manage-users__tab'.concat(this.state.selectedTab === 2 ? ' manage-users__tab--selected' : '' )}

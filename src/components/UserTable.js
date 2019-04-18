@@ -11,6 +11,7 @@ import './UserTable.css';
 
 const ROW_HEIGHT = 120;
 const MAX_TABLE_HEIGHT = 800;
+const MAX_COLUMN_WIDTH = 400;
 
 const EXPAND_ROW_HEIGHT = 60;
 const MAX_EXPAND_TABLE_HEIGHT = EXPAND_ROW_HEIGHT * 4;
@@ -108,67 +109,57 @@ class UserTable extends React.Component {
 
           {
             this.state.loadingPiUsers ?
-              <Spinner />
+            <Spinner />
             :
             this.state.expandedUserChildren.length === 0 ?
               <div style={{ padding: '10px', fontStyle: 'italic' }}>
                 This PI has not added any users yet.
               </div>
             :
-          // <AutoSizer disableHeight>
-          //   {({ width }) => (
-            <Table // users added by this PI
-              width={1300} // width of the first 6 columns of main table
-              height={this.expandTableSize}
-              disableHeader={true}
-              rowHeight={EXPAND_ROW_HEIGHT}
-              rowCount={this.state.expandedUserChildren.length}
-              rowGetter={({ index }) => this.state.expandedUserChildren[index]}
-              rowStyle={{backgroundColor: 'var(--g3-color__silver)', borderColor: 'white'}}
-            >
-              <Column
-                label='Username'
-                dataKey='username'
-                width={200}
-              />
-              <Column
-                label='Name'
-                dataKey='name'
-                width={300}
-              />
-              <Column
-                label='Organization'
-                dataKey='organization'
-                width={200}
-              />
-              <Column
-                label='Contact Email'
-                dataKey='contact_email'
-                width={200}
-              />
-              <Column
-                label='eRA Commons'
-                dataKey='eracommons'
-                width={200}
-              />
-              <Column
-                label='Google Email'
-                dataKey='google_email'
-                width={200}
-              />
-              {/* <Column
-                label='Expiration'
-                dataKey='expiration'
-                width={200}
-              />
-              <Column
-                label='Actions'
-                dataKey='actions'
-                width={200}
-              /> */}
-            </Table>
-            //   )}
-            // </AutoSizer>
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <Table // users added by this PI
+                  width={width * 6/8} // width of first 6 columns of main table
+                  height={this.expandTableSize}
+                  disableHeader={true}
+                  rowHeight={EXPAND_ROW_HEIGHT}
+                  rowCount={this.state.expandedUserChildren.length}
+                  rowGetter={({ index }) => this.state.expandedUserChildren[index]}
+                  rowStyle={{backgroundColor: 'var(--g3-color__silver)', borderColor: 'white'}}
+                >
+                  <Column
+                    label='Username'
+                    dataKey='username'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Name'
+                    dataKey='name'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Organization'
+                    dataKey='organization'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Contact Email'
+                    dataKey='contact_email'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='eRA Commons'
+                    dataKey='eracommons'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Google Email'
+                    dataKey='google_email'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                </Table>
+              )}
+            </AutoSizer>
           }
         </div>
       );
@@ -207,85 +198,85 @@ class UserTable extends React.Component {
       <div className='user-table'>
         {
           this.state.loading ?
-            <Spinner />
-            :
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <Table
-                  ref={this._table}
-                  width={width}
-                  height={this.userTableSize + this.expandTableSize}
-                  headerHeight={ROW_HEIGHT}
-                  rowHeight={this.getRowHeight}
-                  rowCount={data.length}
-                  rowGetter={({ index }) => data[index]}
-                  // only DACs can expand the user rows:
-                  onRowClick={this.props.whoAmI.iam === 'DAC' ? this.toggleRow : null}
-                  rowRenderer={this.userRowRenderer}
-                >
-                  <Column
-                    label='Username'
-                    dataKey='username'
-                    width={200}
-                  />
-                  <Column
-                    label='Name'
-                    dataKey='name'
-                    width={300}
-                  />
-                  <Column
-                    label='Organization'
-                    dataKey='organization'
-                    width={200}
-                  />
-                  <Column
-                    label='Contact Email'
-                    dataKey='contact_email'
-                    width={200}
-                  />
-                  <Column
-                    label='eRA Commons'
-                    dataKey='eracommons'
-                    width={200}
-                  />
-                  <Column
-                    label='Google Email'
-                    dataKey='google_email'
-                    width={200}
-                  />
-                  {
-                    this.props.whoAmI.iam === 'DAC' && (
-                      <Column
-                        label='Expiration'
-                        dataKey='expiration'
-                        width={200}
+          <Spinner />
+          :
+          <AutoSizer disableHeight>
+            {({ width }) => (
+              <Table
+                ref={this._table}
+                width={width}
+                height={this.userTableSize + this.expandTableSize}
+                headerHeight={ROW_HEIGHT}
+                rowHeight={this.getRowHeight}
+                rowCount={data.length}
+                rowGetter={({ index }) => data[index]}
+                // only DACs can expand the user rows:
+                onRowClick={this.props.whoAmI.iam === 'DAC' ? this.toggleRow : null}
+                rowRenderer={this.userRowRenderer}
+              >
+                <Column
+                  label='Username'
+                  dataKey='username'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                <Column
+                  label='Name'
+                  dataKey='name'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                <Column
+                  label='Organization'
+                  dataKey='organization'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                <Column
+                  label='Contact Email'
+                  dataKey='contact_email'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                <Column
+                  label='eRA Commons'
+                  dataKey='eracommons'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                <Column
+                  label='Google Email'
+                  dataKey='google_email'
+                  width={MAX_COLUMN_WIDTH}
+                />
+                {
+                  this.props.whoAmI.iam === 'DAC' && (
+                    <Column
+                      label='Expiration'
+                      dataKey='expiration'
+                      width={MAX_COLUMN_WIDTH}
+                    />
+                  )
+                }
+                <Column
+                  label='Actions'
+                  dataKey='actions'
+                  width={MAX_COLUMN_WIDTH}
+                  cellRenderer={({ rowIndex }) => (
+                    <React.Fragment>
+                      <Button
+                        className='user-table__button'
+                        onClick={(event) => this.openPopup(event, data[rowIndex], false)}
+                        buttonType='primary'
+                        label='Edit'
                       />
-                    )
-                  }
-                  <Column
-                    label='Actions'
-                    dataKey='actions'
-                    width={200}
-                    cellRenderer={({ rowIndex }) => (
-                      <React.Fragment>
-                        <Button
-                          className='user-table__button'
-                          onClick={(event) => this.openPopup(event, data[rowIndex], false)}
-                          buttonType='primary'
-                          label='Edit'
-                        />
-                        <Button
-                          className='user-table__button'
-                          onClick={(event) => this.openPopup(event, data[rowIndex], true)}
-                          buttonType='primary'
-                          label='Delete'
-                        />
-                      </React.Fragment>
-                    )}
-                  />
-                </Table>
-              )}
-            </AutoSizer>
+                      <Button
+                        className='user-table__button'
+                        onClick={(event) => this.openPopup(event, data[rowIndex], true)}
+                        buttonType='primary'
+                        label='Delete'
+                      />
+                    </React.Fragment>
+                  )}
+                />
+              </Table>
+            )}
+          </AutoSizer>
         }
         {
           this.state.selectedUser && this.state.deletePopup && (
