@@ -30,8 +30,8 @@ class UserTable extends React.Component {
       deletePopup: false,
       loading: false,
       message: '',
-      expandedUser: null, //username of the PI whose row was clicked
-      expandedUserChildren: [], //list of users added by this PI
+      expandedUser: null, // username of the PI whose row was clicked
+      expandedUserChildren: [], // list of users added by this PI
     };
   }
 
@@ -169,18 +169,21 @@ class UserTable extends React.Component {
   toggleRow = async (e) => {
     const pi = e.rowData.username;
     if (this.state.expandedUser === pi) { // close the expanded row
-      this.setState({expandedUser: null, expandedUserChildren: []})
+      await this.setState({expandedUser: null, expandedUserChildren: []});
     }
     else { // expand a row
-      this.setState({expandedUser: pi, expandedUserChildren: [], loadingPiUsers: true})
+      await this.setState({expandedUser: pi, expandedUserChildren: [], loadingPiUsers: true});
       this._table.current.recomputeRowHeights(); // spinner will be displayed
       if (!piToUsersCache[pi]) {
         piToUsersCache[pi] = await getUsersForPI(this.props.token, pi);
       }
-      this.setState({
-        loadingPiUsers: false,
-        expandedUserChildren: piToUsersCache[pi]
-      });
+      // if the user clicks on another row before this one loads: do not update
+      if (this.state.expandedUser === pi) {
+        await this.setState({
+          loadingPiUsers: false,
+          expandedUserChildren: piToUsersCache[pi]
+        });
+      }
     }
     this._table.current.recomputeRowHeights();
   }
