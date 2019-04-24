@@ -163,7 +163,7 @@ class UserInformation extends React.Component {
         <h2>Dataset Access</h2>
         <ul className='form-info__user-access'>
           {
-            allDataSets && allDataSets.sort((a, b) => a.phsid > b.phsid).map((project, i) => {
+            allDataSets && allDataSets.sort((a, b) => a.name !== b.name ? a.name < b.name ? -1 : 1 : 0).map((project, i) => {
               return (
                 <li key={i}>
                   <input
