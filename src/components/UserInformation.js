@@ -3,15 +3,30 @@ import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
 import Popup from './Popup';
 import { postUser } from '../api/users';
-// import Select from 'react-select';
+import Select from 'react-select';
 import './FormInformation.css';
+
+const usernameOptions = [
+  { value: 'Google email', label: 'Google email' },
+  { value: 'eRA Commons ID', label: 'eRA Commons ID' }
+];
 
 class UserInformation extends React.Component {
   constructor(props) {
     super(props);
+    let option = null;
+    if (props.selectedUser.username) {
+      if (props.selectedUser.username === props.selectedUser.google_email) {
+        option = usernameOptions[0];
+      } else {
+        option = usernameOptions[1];
+      }
+    }
+
     this.state = {
       name: props.selectedUser.name,
       username: props.selectedUser.username,
+      usernameOption: option,
       organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
@@ -26,8 +41,8 @@ class UserInformation extends React.Component {
     }
   }
 
-  setUserName = e => {
-    this.setState({ username: e.target.value });
+  setUserNameOption = e => {
+    this.setState({ usernameOption: e });
   }
 
   setName = e => {
@@ -76,6 +91,7 @@ class UserInformation extends React.Component {
         google_email: '',
         expiration: this.props.whoAmI.iam === 'DAC' ? '' : '2000-01-01',
         datasets: [],
+        usernameOption: null,
       });
     } else {
       this.setState({
@@ -91,6 +107,16 @@ class UserInformation extends React.Component {
       this.setState(prevState => ({ datasets: prevState.datasets.filter(id => id !== phsid) }));
     } else {
       this.setState(prevState => ({ datasets: prevState.datasets.concat(phsid) }));
+    }
+  }
+
+  validate = () => {
+    if (this.state.usernameOption) {
+      if (this.state.usernameOption === 'Google email') {
+        this.setState({ username: this.state.google_email }, () => this.checkFieldsAreValid());
+      } else {
+        this.setState({ username: this.state.eracommons }, () => this.checkFieldsAreValid());
+      }
     }
   }
 
@@ -113,19 +139,28 @@ class UserInformation extends React.Component {
   }
 
   render() {
-    console.log('this.props', this.props)
+    console.log('state', this.state);
     var { allDataSets } = this.props;
     // users get the same project access as the PI who added them
     if (this.props.whoAmI.iam === 'PI') {
       allDataSets = allDataSets.filter(project => this.props.whoAmI.datasets.includes(project.phsid));
     }
+
     return (
       <React.Fragment>
         <ul className='form-info__details'>
           <h2>User Details</h2>
           <li className='form-info__detail'>
-            <label>Username</label>
-            <input className='form-info__detail-input' type='text' value={this.state.username} onChange={this.setUserName} readOnly={this.props.selectedUser.username} />
+            <label>ACCESS Username</label>
+            <Select
+              className='form-info__detail-select-container'
+              classNamePrefix='form-info__detail-select'
+              value={this.state.usernameOption}
+              onChange={this.setUserNameOption}
+              options={usernameOptions}
+              isDisabled={this.props.selectedUser.username}
+              placeholder='Select the login ID for this user'
+            />
           </li>
           <li className='form-info__detail'>
             <label>Name</label>
@@ -184,7 +219,7 @@ class UserInformation extends React.Component {
             <Button
               className='form-info__submit-button'
               onClick={() => {
-                let validationError = this.checkFieldsAreValid();
+                let validationError = this.validate();
                 if (validationError) {
                   this.showPopup(validationError);
                   this.setState({ addingUser: false, error: true });

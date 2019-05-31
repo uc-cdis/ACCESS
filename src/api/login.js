@@ -20,6 +20,18 @@ export const userIsLoggedIn = async (token) => {
   }
 };
 
+export const fetchLoginOptions = async () => {
+  return fetch(config.loginOptionsUrl, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(res => res.json()).catch(error => {
+    console.error('ERROR', error);
+    return error;
+  });
+}
+
 /**
  Returns logged in user information
  e.g. {iam: 'DAC'/'PI', organization: 'xxx', datasets: ['a', 'b']}
@@ -71,8 +83,8 @@ export const getUser = (token) =>
  Before doing this, stores the current location in session storage for later use.
  @param { string } location - the current url location.
  */
-export const loginRedirect = (location) => {
+export const loginRedirect = (idp, location) => {
   const redirectUri = encodeURIComponent(`${config.redirectUrl}`);
   sessionStorage.setItem('origin', location);
-  window.location = `${config.authUrl}?client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}`;
+  window.location = `${config.authUrl}?idp=${idp}&client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}`;
 };
