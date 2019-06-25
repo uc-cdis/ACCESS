@@ -166,7 +166,13 @@ class UserInformation extends React.Component {
           </li>
           <li className='form-info__detail'>
             <label>eRA Commons ID</label>
-            <input className='form-info__detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.eracommons}
+              onChange={this.seteRA}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.eracommons}
+            />
           </li>
           <li className='form-info__detail'>
             <label>ORCID</label>
@@ -178,7 +184,13 @@ class UserInformation extends React.Component {
           </li>
           <li className='form-info__detail'>
             <label>Google Email</label>
-            <input className='form-info__detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.google_email}
+              onChange={this.setGoogleEmail}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.google_email}
+            />
           </li>
           {
             this.props.whoAmI.iam === 'DAC' && (
