@@ -7,8 +7,8 @@ import Select from 'react-select';
 import './FormInformation.css';
 
 const usernameOptions = [
-  { value: 'Google email', label: 'Google email' },
-  { value: 'eRA Commons ID', label: 'eRA Commons ID' }
+  { value: 'google_email', label: 'Google email' },
+  { value: 'eracommons', label: 'eRA Commons ID' }
 ];
 
 class UserInformation extends React.Component {
@@ -110,26 +110,20 @@ class UserInformation extends React.Component {
     }
   }
 
-  validate = () => {
-    if (this.state.usernameOption) {
-      if (this.state.usernameOption === 'Google email') {
-        this.setState({ username: this.state.google_email }, () => this.checkFieldsAreValid());
-      } else {
-        this.setState({ username: this.state.eracommons }, () => this.checkFieldsAreValid());
-      }
-    }
-  }
-
   checkFieldsAreValid = () => {
-    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'username'];
+    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'usernameOption'];
     const requiredDacFields = ['organization', 'expiration'];
     if (this.props.whoAmI.iam === 'DAC') {
       requiredStringFields = requiredStringFields.concat(requiredDacFields);
     }
     let invalidFields = [];
     for (var i = 0; i < requiredStringFields.length; i++) {
-      let val = this.state[requiredStringFields[i]];
-      if (!Boolean(val.trim()))
+      let val = this.state[requiredStringFields[i]] || false;
+      try {
+        val = val.trim();
+      }
+      catch (e) {}
+      if (!Boolean(val))  // if field is empty: add to invalid fields
         invalidFields.push(requiredStringFields[i])
     }
     if (invalidFields.length > 0)
@@ -219,13 +213,16 @@ class UserInformation extends React.Component {
             <Button
               className='form-info__submit-button'
               onClick={() => {
-                let validationError = this.validate();
+                let validationError = this.checkFieldsAreValid();
                 if (validationError) {
                   this.showPopup(validationError);
                   this.setState({ addingUser: false, error: true });
                 }
                 else {
-                  this.setState({ addingUser: true }, () => {
+                  this.setState({
+                    addingUser: true,
+                    username: this.state[this.state.usernameOption.value]
+                  }, () => {
                     postUser(this.state, this.props.token).then(res => {
                       this.props.updateUsers();
                       this.showPopup(res.message ? `Error: ${res.message}` : `Successfully added user ${this.state.name} (${this.state.username})${this.state.datasets.length > 0 ? ' and granted access to ' + this.state.datasets.join(', ') : ''}.`);
