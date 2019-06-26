@@ -133,7 +133,6 @@ class UserInformation extends React.Component {
   }
 
   render() {
-    console.log('state', this.state);
     var { allDataSets } = this.props;
     // users get the same project access as the PI who added them
     if (this.props.whoAmI.iam === 'PI') {

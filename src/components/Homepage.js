@@ -17,7 +17,6 @@ class Homepage extends Component {
         this.props.history.push('/manage');
       } else {
         fetchLoginOptions().then((options) => {
-          console.log(options)
           if (options && options.providers) {
             this.setState({ loginOptions: options.providers });
           }

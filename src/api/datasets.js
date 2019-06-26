@@ -44,7 +44,7 @@ export const postDataset = async (dataset, token) => {
       },
       body: JSON.stringify({name: dataset.name.trim(), phsid: dataset.phsid.trim()}),
     })
-    .then((res) => {console.log(res); return res.json()})
+    .then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);
   } else {
     return { message: 'No token sent' };

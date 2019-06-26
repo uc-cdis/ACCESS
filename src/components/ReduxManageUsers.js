@@ -3,7 +3,6 @@ import { fetchUserInfo, logout } from '../actions/userActions';
 import ManageUsers from './ManageUsers';
 
 const mapStateToProps = state => {
-  console.log('state', state)
   return ({
     user: state.user.user,
     token: state.user.token,
