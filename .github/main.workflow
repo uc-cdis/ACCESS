@@ -12,8 +12,14 @@ action "NPM Build" {
   args = "ci && npm run build"
 }
 
-action "Deploy to S3" {
+action "Master branch only" {
   needs = "NPM Build"
+  uses = "actions/bin/filter@master"
+  args = "branch master"
+}
+
+action "Deploy to S3" {
+  needs = "Master branch only"
   uses = "actions/aws/cli@master"
   secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
   env = {
