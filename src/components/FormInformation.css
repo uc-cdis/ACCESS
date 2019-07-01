@@ -1,0 +1,119 @@
+.form-info__details,
+.form-info__user-access {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--primary);
+  box-sizing: border-box;
+}
+
+.form-info__detail {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  width: 80%;
+  justify-content: space-between;
+}
+
+.form-info__detail label {
+  width: 20%;
+}
+
+.form-info__detail-input {
+  padding: 10px 10px;
+  width: 80%;
+  margin-left: 20px;
+  border-radius: 4px;
+  box-shadow: none;
+  border: 1px solid var(--g3-color__gray);
+  font-size: 14px;
+  outline: none;
+}
+
+.form-info__detail-select-container {
+  padding: 0;
+  width: 80%;
+  margin-left: 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-info__detail-select__control {
+  border-radius: 4px;
+  border: 1px solid var(--g3-color__gray) !important;
+}
+
+.form-info__detail-select__indicator-separator {
+  background-color: var(--g3-color__gray) !important;
+}
+
+.form-info__detail-select__dropdown-indicator {
+  color: var(--g3-color__gray) !important;
+}
+
+.form-info__detail-select__option {
+  cursor: pointer !important;
+}
+
+.form-info__detail-input:read-only {
+  background-color: var(--g3-color__silver);
+}
+
+.form-info__user-access-item {
+  border: none;
+  list-style: none;
+  margin: 10px 0 0 0;
+  padding: 0 0 0 20px;
+}
+
+.form-info__user-access-item li {
+  margin-bottom: 10px;
+}
+
+.form-info__user-access input[type='checkbox'] {
+  margin-right: 10px;
+  cursor: pointer;
+  border: 1px solid var(--g3-color__gray);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  background: #ffffff;
+  height: 18px;
+  width: 18px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.form-info__user-access input[type='checkbox']:checked {
+  background: var(--highlight);
+}
+
+.form-info__user-access input[type='checkbox']:disabled {
+  background: var(--g3-color__silver);
+}
+
+// defines check in checkbox
+.form-info__user-access input[type='checkbox']:after {
+  content: '';
+  width: 15%;
+  height: 40%;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  display: none;
+}
+
+.form-info__user-access input[type='checkbox']:checked:after {
+  display: flex;
+  justify-content: center;
+  content: '✔';
+  color: #fff;
+}
+
+.form-info__submit-button {
+  margin: 10px 10px;
+  width: 250px;
+}

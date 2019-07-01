@@ -1,8 +1,8 @@
 @import '~@gen3/ui-component/dist/css/base.css';
 
 :root {
-  --primary: var(--g3-color__base-blue-light);
-  --highlight: var(--g3-color__highlight-orange);
+  --primary: #6d6e70;
+  --highlight: #c02f42;
 }
 
 .app {
@@ -13,5 +13,13 @@
 }
 
 .header {
+  background-color: var(--primary);
+}
+
+.g3-button--primary {
+  background-color: var(--highlight);
+}
+
+.g3-button--primary:hover {
   background-color: var(--primary);
 }

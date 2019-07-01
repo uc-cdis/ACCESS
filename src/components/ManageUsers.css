@@ -31,8 +31,11 @@
 }
 
 .manage-users__tab--selected {
-  background-color: var(--primary);
+  background-color: var(--highlight);
   color: #fff;
+  border-top: 2px solid var(--highlight);
+  border-left: 2px solid var(--highlight);
+  border-right: 2px solid var(--highlight);
 }
 
 .manage-users__content {
@@ -41,4 +44,12 @@
   align-items: flex-start;
   margin: 0 10px 10px 10px;
   border-top: 2px solid var(--primary);
+}
+
+.manage-users__logout-button {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 20px 20px;
+  margin: 10px 50px;
 }

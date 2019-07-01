@@ -12,6 +12,8 @@
 
 .ReactVirtualized__Table__row {
   border-top: 2px solid var(--g3-color__silver);
+  cursor: pointer;
+  outline: none;
 }
 
 .ReactVirtualized__Table__Grid {

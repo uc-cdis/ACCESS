@@ -1,59 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
+import Popup from './Popup';
+import { postUser } from '../api/users';
 import Select from 'react-select';
-import './UserInformation.css';
+import './FormInformation.css';
 
-const dataSets = {
-  TOPMed: {
-    Tier1A: [ "MESA", "COPD"],
-    Tier1B: [ "GALAII", "Framingham"],
-    Tier2: [ ]
-  }
-};
-
-const PIs = [
-  { label: "Robert Grossman", value: "Robert Grossman" },
-  { label: "Benedict Paten", value: "Benedict Paten" },
-  { label: "Anthony Philippakis", value: "Anthony Philippakis "}
+const usernameOptions = [
+  { value: 'google_email', label: 'Google email' },
+  { value: 'eracommons', label: 'eRA Commons ID' }
 ];
-
-const dropdownStyles = {
-  control: (provided, state) => ({
-    ...provided,
-    borderStyle: 'solid',
-    border: '1px solid #606060',
-    margin: '0'
-  }),
-  container: (provided, state) => ({
-    ...provided,
-    width: 'calc(80% + 20px)',
-    margin: '0 0 0 20px'
-  })
-}
 
 class UserInformation extends React.Component {
   constructor(props) {
     super(props);
+    let option = null;
+    if (props.selectedUser.username) {
+      if (props.selectedUser.username === props.selectedUser.google_email) {
+        option = usernameOptions[0];
+      } else {
+        option = usernameOptions[1];
+      }
+    }
+
     this.state = {
-      firstName: props.user.firstName,
-      lastName: props.user.lastName,
-      organization: props.user.organization,
-      eRA: props.user.eRA,
-      ORCID: props.user.ORCID,
-      PI: PIs.find((p) => p.label === props.user.PI) ? PIs.find((p) => p.label === props.user.PI) : null,
-      accessDate: props.user.accessDate,
-      accessExp: props.user.accessExp,
-      showButton: props.user.firstName === ''
+      name: props.selectedUser.name,
+      username: props.selectedUser.username,
+      usernameOption: option,
+      organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
+      eracommons: props.selectedUser.eracommons,
+      orcid: props.selectedUser.orcid,
+      expiration: props.whoAmI.iam === 'DAC' ? props.selectedUser.expiration : '2000-01-01', // fake expiration: user expires when PI expires
+      contact_email: props.selectedUser.contact_email,
+      google_email: props.selectedUser.google_email,
+      datasets: props.selectedUser.datasets,
+      popup: false,
+      message: null,
+      error: null,
+      addingUser: false,
     }
   }
 
-  setFirstName = e => {
-    this.setState({ firstName: e.target.value });
+  setUserNameOption = e => {
+    this.setState({ usernameOption: e });
   }
 
-  setLastName = e => {
-    this.setState({ lastName: e.target.value });
+  setName = e => {
+    this.setState({ name: e.target.value });
   }
 
   setOrganization = e => {
@@ -61,107 +54,213 @@ class UserInformation extends React.Component {
   }
 
   seteRA = e => {
-    this.setState({ eRA: e.target.value });
+    this.setState({ eracommons: e.target.value });
   }
 
   setORCID = e => {
-    this.setState({ ORCID: e.target.value });
+    this.setState({ orcid: e.target.value });
   }
 
-  setPI = option => {
-    this.setState({ PI: option });
+  setExpiration = e => {
+    this.setState({ expiration: e.target.value });
   }
 
-  setAccessDate = e => {
-    this.setState({ accessDate: e.target.value });
+  setContactEmail = e => {
+    this.setState({ contact_email: e.target.value });
   }
 
-  setAccessExp = e => {
-    this.setState({ accessExp: e.target.value });
+  setGoogleEmail = e => {
+    this.setState({ google_email: e.target.value });
+  }
+
+  showPopup = message => {
+    this.setState({ popup: true, message });
+  }
+
+  closePopup = success => {
+    if (this.state.error === null) {
+      this.setState({
+        popup: false,
+        message: null,
+        username: '',
+        name: '',
+        organization: this.props.whoAmI.iam === 'DAC' ? '' : this.props.whoAmI.organization,
+        eracommons: '',
+        orcid: '',
+        contact_email: '',
+        google_email: '',
+        expiration: this.props.whoAmI.iam === 'DAC' ? '' : '2000-01-01',
+        datasets: [],
+        usernameOption: null,
+      });
+    } else {
+      this.setState({
+        popup: false,
+        message: null,
+        error: null,
+      });
+    }
+  }
+
+  selectDataSet = phsid => {
+    if (this.state.datasets.includes(phsid)) {
+      this.setState(prevState => ({ datasets: prevState.datasets.filter(id => id !== phsid) }));
+    } else {
+      this.setState(prevState => ({ datasets: prevState.datasets.concat(phsid) }));
+    }
+  }
+
+  checkFieldsAreValid = () => {
+    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'usernameOption'];
+    const requiredDacFields = ['organization', 'expiration'];
+    if (this.props.whoAmI.iam === 'DAC') {
+      requiredStringFields = requiredStringFields.concat(requiredDacFields);
+    }
+    let invalidFields = [];
+    for (var i = 0; i < requiredStringFields.length; i++) {
+      let val = this.state[requiredStringFields[i]] || false;
+      try {
+        val = val.trim();
+      }
+      catch (e) {}
+      if (!Boolean(val))  // if field is empty: add to invalid fields
+        invalidFields.push(requiredStringFields[i])
+    }
+    if (invalidFields.length > 0)
+      return `You have not provided a value for the following required fields: ${invalidFields.join(', ')}.`;
+    else
+      return '';
   }
 
   render() {
+    var { allDataSets } = this.props;
+    // users get the same project access as the PI who added them
+    if (this.props.whoAmI.iam === 'PI') {
+      allDataSets = allDataSets.filter(project => this.props.whoAmI.datasets.includes(project.phsid));
+    }
+
     return (
       <React.Fragment>
-        <ul className='user-info__user-details'>
+        <ul className='form-info__details'>
           <h2>User Details</h2>
-          <li className='user-info__user-detail'>
-            <label>First Name</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.firstName} onChange={this.setFirstName} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>Last Name</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.lastName} onChange={this.setLastName} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>Organization</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.organization} onChange={this.setOrganization} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>eRA Commons ID</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.eRA} onChange={this.seteRA} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>ORCID</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.ORCID} onChange={this.setORCID} />
-          </li>
-          <li className='user-info__user-detail'>
-            <label>PI</label>
+          <li className='form-info__detail'>
+            <label>ACCESS Username</label>
             <Select
-              styles={dropdownStyles}
-              value={this.state.PI}
-              onChange={this.setPI}
-              options={PIs}
+              className='form-info__detail-select-container'
+              classNamePrefix='form-info__detail-select'
+              value={this.state.usernameOption}
+              onChange={this.setUserNameOption}
+              options={usernameOptions}
+              isDisabled={this.props.selectedUser.username}
+              placeholder='Select the login ID for this user'
             />
           </li>
-          <li className='user-info__user-detail'>
-            <label>Access Allowed Date</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.accessDate} onChange={this.setAccessDate} />
+          <li className='form-info__detail'>
+            <label>Name</label>
+            <input className='form-info__detail-input' type='text' value={this.state.name} onChange={this.setName} />
           </li>
-          <li className='user-info__user-detail'>
-            <label>Access Expiration Date</label>
-            <input className='user-info__user-detail-input' type='text' value={this.state.accessExp} onChange={this.setAccessExp} />
+          <li className='form-info__detail'>
+            <label>Organization</label>
+            <input className={'form-info__detail-input'} type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
           </li>
+          <li className='form-info__detail'>
+            <label>eRA Commons ID</label>
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.eracommons}
+              onChange={this.seteRA}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.eracommons}
+            />
+          </li>
+          <li className='form-info__detail'>
+            <label>ORCID</label>
+            <input className='form-info__detail-input' type='text' value={this.state.orcid} onChange={this.setORCID} />
+          </li>
+          <li className='form-info__detail'>
+            <label>Contact Email</label>
+            <input className='form-info__detail-input' type='text' value={this.state.contact_email} onChange={this.setContactEmail} />
+          </li>
+          <li className='form-info__detail'>
+            <label>Google Email</label>
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.google_email}
+              onChange={this.setGoogleEmail}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.google_email}
+            />
+          </li>
+          {
+            this.props.whoAmI.iam === 'DAC' && (
+              <li className='form-info__detail'>
+                <label>Access Expiration Date</label>
+                <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='YYYY-MM-DD' />
+              </li>
+            )
+          }
         </ul>
-        <ul className='user-info__user-access'>
-          <h2>User Access</h2>
-          <li className='user-info__user-access-item'>
-            {
-              Object.keys(dataSets).map((program, i) => {
-                return (
-                  <ul className='user-info__user-access-item' key={i}>
-                    <li><input type='checkbox' />{ program }</li>
-                    <ul className='user-info__user-access-item'>
-                      {
-                        Object.keys(dataSets[program]).map((project, j) =>
-                          <React.Fragment key={j}>
-                            <li><input type='checkbox' />{ project }</li>
-                            <ul className='user-info__user-access-item'>
-                              {
-                                dataSets[program][project].map((dataSet, r) =>
-                                  <li className='user-info__user-access-item' key={r}><input type='checkbox' />{ dataSet }</li>
-                                )
-                              }
-                            </ul>
-                          </React.Fragment>
-                        )
-                      }
-                    </ul>
-                  </ul>
-                )
-              })
-            }
-          </li>
+        <h2>Dataset Access</h2>
+        <ul className='form-info__user-access'>
+          {
+            allDataSets && allDataSets.sort((a, b) => a.name !== b.name ? a.name < b.name ? -1 : 1 : 0).map((project, i) => {
+              return (
+                <li key={i}>
+                  <input
+                    type='checkbox'
+                    key={i}
+                    checked={this.state.datasets.includes(project.phsid) || this.props.whoAmI.iam === 'PI'}
+                    onChange={() => this.selectDataSet(project.phsid)}
+                    disabled={this.props.whoAmI.iam === 'PI'}
+                  />
+                  {project.name} ({project.phsid})
+                  </li>
+              )
+            })
+          }
         </ul>
         {
-          this.state.showButton ?
+          this.props.selectedUser.name !== '' ? null : (
             <Button
-              className='user-info__submit-button '
-              onClick={() => { }}
+              className='form-info__submit-button'
+              onClick={() => {
+                let validationError = this.checkFieldsAreValid();
+                if (validationError) {
+                  this.showPopup(validationError);
+                  this.setState({ addingUser: false, error: true });
+                }
+                else {
+                  this.setState({
+                    addingUser: true,
+                    username: this.state[this.state.usernameOption.value]
+                  }, () => {
+                    postUser(this.state, this.props.token).then(res => {
+                      this.props.updateUsers();
+                      this.showPopup(res.message ? `Error: ${res.message}` : `Successfully added user ${this.state.name} (${this.state.username})${this.state.datasets.length > 0 ? ' and granted access to ' + this.state.datasets.join(', ') : ''}.`);
+                      this.setState({ addingUser: false, error: res.message ? res.message : null });
+                    })
+                  });
+                }
+              }}
               label='Add User'
               buttonType='primary'
+              isPending={this.state.addingUser}
             />
-          : null
+          )
+        }
+        {
+          this.state.popup && (
+            <Popup
+              title='Add User'
+              message={this.state.message}
+              rightButtons={[
+                {
+                  caption: 'Close',
+                  fn: this.closePopup,
+                },
+              ]}
+            />
+          )
         }
       </React.Fragment>
     )
@@ -170,28 +269,40 @@ class UserInformation extends React.Component {
 
 UserInformation.propTypes = {
   user: PropTypes.shape({
-    firstName: PropTypes.string,
-    lastName: PropTypes.string,
+    username: PropTypes.string,
+    name: PropTypes.string,
     organization: PropTypes.string,
-    eRA: PropTypes.string,
-    ORCID: PropTypes.string,
-    PI: PropTypes.string,
-    accessDate: PropTypes.string,
-    accessExp: PropTypes.string,
+    eracommons: PropTypes.string,
+    orcid: PropTypes.string,
+    expiration: PropTypes.string,
+    contact_email: PropTypes.string,
+    google_email: PropTypes.string,
+    datasets: PropTypes.array,
   }),
+  whoAmI: PropTypes.shape({
+    iam: PropTypes.string,
+    organization: PropTypes.string,
+    datasets: PropTypes.array,
+  }),
+  allDataSets: PropTypes.array,
+  token: PropTypes.object,
+  updateUsers: PropTypes.func.isRequired,
 };
 
 UserInformation.defaultProps = {
-  user: {
-    firstName: '',
-    lastName: '',
+  selectedUser: {
+    username: '',
+    name: '',
     organization: '',
-    eRA: '',
-    ORCID: '',
-    PI: null,
-    accessDate: '',
-    accessExp: '',
+    eracommons: '',
+    orcid: '',
+    contact_email: '',
+    google_email: '',
+    expiration: '',
+    datasets: [],
   },
+  allDataSets: [],
+  token: null,
 };
 
 export default UserInformation;

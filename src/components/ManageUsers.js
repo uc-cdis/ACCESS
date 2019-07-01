@@ -1,62 +1,53 @@
 import React from 'react';
+import Button from '@gen3/ui-component/dist/components/Button';
 import UserInformation from './UserInformation';
+import DatasetInformation from './DatasetInformation';
 import UserTable from './UserTable';
 import { userIsLoggedIn } from '../api/login';
+import { getUsers } from '../api/users';
+import { getDatasets } from '../api/datasets';
 import './ManageUsers.css';
-
-const users = [
-  {
-    id: 0,
-    firstName: 'Abby',
-    lastName: 'George',
-    organization: 'UChicago',
-    eRA: 'abbygeorge',
-    ORCID: 'abbygeorge',
-    PI: 'Robert Grossman',
-    accessDate: '3/20/2019',
-    accessExp: '3/21/2021',
-  },
-  {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Smith',
-    organization: 'Broad',
-    eRA: 'johnsmith',
-    ORCID: 'johnsmith',
-    PI: 'Anthony Philippakis',
-    accessDate: '1/23/2019',
-    accessExp: '5/23/2021',
-  },
-  {
-    id: 2,
-    firstName: 'Jane',
-    lastName: 'Doe',
-    organization: 'UCSC',
-    eRA: 'janedoe',
-    ORCID: 'janedoe',
-    PI: 'Benedict Paten',
-    accessDate: '12/03/2018',
-    accessExp: '12/03/2021',
-  },
-];
 
 class ManageUsers extends React.Component {
   constructor(props) {
     super(props);
+    this.updateUsers = this.updateUsers.bind(this);
     this.state = {
       selectedTab: 0,
-      loggedIn: null,
+      users: [],
+      allDataSets: [],
     }
   }
 
   componentDidMount() {
-    userIsLoggedIn().then((loggedIn) => {
+    userIsLoggedIn(this.props.token).then((loggedIn) => {
       if (!loggedIn) {
         this.props.history.push('/');
       } else {
-        this.setState({ loggedIn: true });
+        this.updateTable();
       }
+    }).catch(error => error);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!!!nextProps.user) {
+      this.props.history.push('/');
+    }
+  }
+
+  updateTable = async () => {
+    console.log('updating users...')
+    await getUsers(this.props.token).then(usersResults => {
+      console.log('users', usersResults)
+      this.setState({ users: usersResults });
     });
+    await getDatasets(this.props.token).then(datasetResults => {
+      this.setState({allDataSets: datasetResults });
+    });
+  }
+
+  updateUsers() {
+    getUsers().then(usersResults => this.setState({ users: usersResults }));
   }
 
   selectTab = tab => {
@@ -67,7 +58,17 @@ class ManageUsers extends React.Component {
     return (
       <React.Fragment>
         {
-          this.state.loggedIn ?
+          this.props.user && (
+            <Button
+              onClick={() => this.props.logout() }
+              buttonType='primary'
+              label={'Log out from '.concat(this.props.user.name)}
+              className='manage-users__logout-button'
+            />
+          )
+        }
+        {
+          this.props.user && (
             <div className='manage-users'>
               <div className='manage-users__tab-bar'>
                 <div
@@ -75,27 +76,40 @@ class ManageUsers extends React.Component {
                   className={'manage-users__tab'.concat(this.state.selectedTab === 0 ? ' manage-users__tab--selected' : '' )}
                   onClick={() => this.selectTab(0)}
                 >
-                  Add a New User
+                  Manage Current Users
                 </div>
                 <div
                   tab={1}
                   className={'manage-users__tab'.concat(this.state.selectedTab === 1 ? ' manage-users__tab--selected' : '' )}
                   onClick={() => this.selectTab(1)}
                 >
-                  Manage Current Users
+                  Add a New User
                 </div>
+                {
+                  false && this.props.whoAmI.iam === 'DAC' && ( // disabled
+                    <div
+                      tab={1}
+                      className={'manage-users__tab'.concat(this.state.selectedTab === 2 ? ' manage-users__tab--selected' : '' )}
+                      onClick={() => this.selectTab(2)}
+                    >
+                      Add a New Dataset
+                    </div>
+                  )
+                }
               </div>
               <div className='manage-users__content'>
                 {
                   this.state.selectedTab === 0 ? (
-                    <UserInformation />
+                    <UserTable data={this.state.users} allDataSets={this.state.allDataSets} updateTable={this.updateTable} {...this.props} />
+                  ): this.state.selectedTab === 1 ? (
+                    <UserInformation allDataSets={this.state.allDataSets} updateUsers={this.updateTable} {...this.props} />
                   ): (
-                    <UserTable data={users} />
+                    <DatasetInformation updateDatasets={this.updateTable} {...this.props} />
                   )
                 }
               </div>
             </div>
-          : null
+          )
         }
       </React.Fragment>
     )
