@@ -7,6 +7,7 @@ const clientId = process.env.REACT_APP_CLIENT_ID;
 const redirectUrl = process.env.REACT_APP_REDIRECT_URL;
 const tokenPath = 'stageToken';
 const userApi =`${authHost}/user/user`;
+const loginOptionsUrl = `${authHost}/user/login`;
 
 module.exports = {
   oauthResponseType,
@@ -17,4 +18,5 @@ module.exports = {
   tokenPath,
   userApi,
   apiHost,
+  loginOptionsUrl,
 };

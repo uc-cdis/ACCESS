@@ -3,7 +3,6 @@ import { login, fetchUserInfo } from '../actions/userActions';
 import Login from './Login';
 
 const mapStateToProps = state => {
-  console.log('state', state)
   return ({
     token: state.user.token,
     user: state.user.user,

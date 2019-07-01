@@ -3,15 +3,30 @@ import PropTypes from 'prop-types';
 import Button from '@gen3/ui-component/dist/components/Button';
 import Popup from './Popup';
 import { postUser } from '../api/users';
-// import Select from 'react-select';
+import Select from 'react-select';
 import './FormInformation.css';
+
+const usernameOptions = [
+  { value: 'google_email', label: 'Google email' },
+  { value: 'eracommons', label: 'eRA Commons ID' }
+];
 
 class UserInformation extends React.Component {
   constructor(props) {
     super(props);
+    let option = null;
+    if (props.selectedUser.username) {
+      if (props.selectedUser.username === props.selectedUser.google_email) {
+        option = usernameOptions[0];
+      } else {
+        option = usernameOptions[1];
+      }
+    }
+
     this.state = {
       name: props.selectedUser.name,
       username: props.selectedUser.username,
+      usernameOption: option,
       organization: props.whoAmI.iam === 'DAC' ? props.selectedUser.organization : props.whoAmI.organization,
       eracommons: props.selectedUser.eracommons,
       orcid: props.selectedUser.orcid,
@@ -26,8 +41,8 @@ class UserInformation extends React.Component {
     }
   }
 
-  setUserName = e => {
-    this.setState({ username: e.target.value });
+  setUserNameOption = e => {
+    this.setState({ usernameOption: e });
   }
 
   setName = e => {
@@ -76,6 +91,7 @@ class UserInformation extends React.Component {
         google_email: '',
         expiration: this.props.whoAmI.iam === 'DAC' ? '' : '2000-01-01',
         datasets: [],
+        usernameOption: null,
       });
     } else {
       this.setState({
@@ -95,15 +111,19 @@ class UserInformation extends React.Component {
   }
 
   checkFieldsAreValid = () => {
-    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'username'];
+    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'usernameOption'];
     const requiredDacFields = ['organization', 'expiration'];
     if (this.props.whoAmI.iam === 'DAC') {
       requiredStringFields = requiredStringFields.concat(requiredDacFields);
     }
     let invalidFields = [];
     for (var i = 0; i < requiredStringFields.length; i++) {
-      let val = this.state[requiredStringFields[i]];
-      if (!Boolean(val.trim()))
+      let val = this.state[requiredStringFields[i]] || false;
+      try {
+        val = val.trim();
+      }
+      catch (e) {}
+      if (!Boolean(val))  // if field is empty: add to invalid fields
         invalidFields.push(requiredStringFields[i])
     }
     if (invalidFields.length > 0)
@@ -113,19 +133,27 @@ class UserInformation extends React.Component {
   }
 
   render() {
-    console.log('this.props', this.props)
     var { allDataSets } = this.props;
     // users get the same project access as the PI who added them
     if (this.props.whoAmI.iam === 'PI') {
       allDataSets = allDataSets.filter(project => this.props.whoAmI.datasets.includes(project.phsid));
     }
+
     return (
       <React.Fragment>
         <ul className='form-info__details'>
           <h2>User Details</h2>
           <li className='form-info__detail'>
-            <label>Username</label>
-            <input className='form-info__detail-input' type='text' value={this.state.username} onChange={this.setUserName} readOnly={this.props.selectedUser.username} />
+            <label>ACCESS Username</label>
+            <Select
+              className='form-info__detail-select-container'
+              classNamePrefix='form-info__detail-select'
+              value={this.state.usernameOption}
+              onChange={this.setUserNameOption}
+              options={usernameOptions}
+              isDisabled={this.props.selectedUser.username}
+              placeholder='Select the login ID for this user'
+            />
           </li>
           <li className='form-info__detail'>
             <label>Name</label>
@@ -137,7 +165,13 @@ class UserInformation extends React.Component {
           </li>
           <li className='form-info__detail'>
             <label>eRA Commons ID</label>
-            <input className='form-info__detail-input' type='text' value={this.state.eracommons} onChange={this.seteRA} />
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.eracommons}
+              onChange={this.seteRA}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.eracommons}
+            />
           </li>
           <li className='form-info__detail'>
             <label>ORCID</label>
@@ -149,7 +183,13 @@ class UserInformation extends React.Component {
           </li>
           <li className='form-info__detail'>
             <label>Google Email</label>
-            <input className='form-info__detail-input' type='text' value={this.state.google_email} onChange={this.setGoogleEmail} />
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.google_email}
+              onChange={this.setGoogleEmail}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.google_email}
+            />
           </li>
           {
             this.props.whoAmI.iam === 'DAC' && (
@@ -190,7 +230,10 @@ class UserInformation extends React.Component {
                   this.setState({ addingUser: false, error: true });
                 }
                 else {
-                  this.setState({ addingUser: true }, () => {
+                  this.setState({
+                    addingUser: true,
+                    username: this.state[this.state.usernameOption.value]
+                  }, () => {
                     postUser(this.state, this.props.token).then(res => {
                       this.props.updateUsers();
                       this.showPopup(res.message ? `Error: ${res.message}` : `Successfully added user ${this.state.name} (${this.state.username})${this.state.datasets.length > 0 ? ' and granted access to ' + this.state.datasets.join(', ') : ''}.`);

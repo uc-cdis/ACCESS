@@ -30,7 +30,6 @@ class ManageUsers extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps)
     if (!!!nextProps.user) {
       this.props.history.push('/');
     }
@@ -56,7 +55,6 @@ class ManageUsers extends React.Component {
   }
 
   render() {
-    console.log('manage users props', this.props)
     return (
       <React.Fragment>
         {
