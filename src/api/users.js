@@ -1,5 +1,19 @@
 import config from '../config';
 
+const getCleanUserData = (user) => {
+  return {
+    username: user.username ? user.username.trim() : "N/A",
+    name: user.name ? user.name.trim() : "N/A",
+    eracommons: user.eracommons ? user.eracommons.trim() : "N/A",
+    orcid: user.orcid ? user.orcid.trim() : "N/A",
+    organization: user.organization ? user.organization.trim() : "N/A",
+    contact_email: user.contact_email ? user.contact_email.trim() : "N/A",
+    google_email: user.google_email ? user.google_email.trim() : "N/A",
+    expiration: user.expiration ? user.expiration.trim() : "N/A",
+    datasets: user.datasets
+  }
+}
+
 /**
  Fetches the users in the table.
  */
@@ -73,7 +87,7 @@ export const postUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-      body: JSON.stringify({username: user.username.trim(), name: user.name.trim(), eracommons: user.eracommons.trim(), orcid: user.orcid.trim(), organization: user.organization.trim(), contact_email: user.contact_email.trim(), google_email: user.google_email.trim(), expiration: user.expiration.trim(), datasets: user.datasets}),
+      body: JSON.stringify(getCleanUserData(user)),
     })
     .then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);
@@ -94,7 +108,7 @@ export const editUser = async (user, token) => {
         'Content-Type': 'application/json',
         'Authorization': `bearer ${accessToken}`
       },
-      body: JSON.stringify({username: user.username.trim(), name: user.name.trim(), eracommons: user.eracommons.trim(), orcid: user.orcid.trim(), organization: user.organization.trim(), contact_email: user.contact_email.trim(), google_email: user.google_email.trim(), expiration: user.expiration.trim(), datasets: user.datasets}),
+      body: JSON.stringify(getCleanUserData(user)),
     }).then((res) => res.json())
     .then(data => data.reason ? { message: data.reason } : data);
   } else {

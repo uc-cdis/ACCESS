@@ -8,6 +8,10 @@
   box-sizing: border-box;
 }
 
+.form-info__instructions {
+  font-style: italic;
+}
+
 .form-info__detail {
   margin: 10px 0;
   display: flex;
