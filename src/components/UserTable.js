@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FileSaver from 'file-saver';
 import Button from '@gen3/ui-component/dist/components/Button';
 import { AutoSizer, Column, Table, defaultTableRowRenderer } from 'react-virtualized';
 import 'react-virtualized/styles.css'; // only needs to be imported once
@@ -29,6 +30,7 @@ class UserTable extends React.Component {
       selectedUser: null,
       deletePopup: false,
       loading: false,
+      exporting: false,
       message: '',
       expandedUser: null, // username of the PI whose row was clicked
       expandedUserChildren: [], // list of users added by this PI
@@ -82,6 +84,75 @@ class UserTable extends React.Component {
         .then(() => this.setState({ selectedUser: null, loading: false }));
       });
     }
+  }
+
+  exportUserData = async () => {
+    console.log("Exporting user data");
+
+    // wait for users and datasets to be available
+    const timeoutSecs = 10; // give up after 10 secs
+    function sleepMS(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    };
+    let slept = 0;
+    while (!(this.props.data && this.props.data.length && this.props.allDataSets && this.props.allDataSets.length)) {
+      await sleepMS(100);
+      slept += 100;
+      if (slept >= timeoutSecs * 1000) {
+        console.error(`Did not receive users and datasets for export after ${timeoutSecs} secs - giving up`);
+        return;
+      }
+    }
+
+    // generate file name
+    const date = new Date();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const dateString = `${date.getFullYear()}-${month}-${day}`;
+    const fileName = `datastage_users_${dateString}.tsv`;
+
+    // generate TSV
+    let headers = ["Username", "Name", "PI", "Organization", "eRA Commons", "ORCID", "Google Email", "Contact Email", "Access Expiration Date"];
+    headers = headers.concat(
+      this.props.allDataSets.map(d => `${d.name} (${d.phsid})`)
+    )
+    let contents = [headers.join("\t")];
+    for (var user of this.props.data) {
+      let piUsername = user.username;;
+      console.log(`  Exporting ${piUsername}`);
+
+      // if DAC: add PI; if PI: add user
+      // name of the user's PI, or "PI" if user is a PI:
+      let piStatus = this.props.whoAmI.iam === "DAC" ? "PI" : this.props.user.name;
+      let datasetList = this.props.allDataSets.map(
+        d => user.datasets.includes(d.phsid) ? "yes" : "no"
+      );
+      let row = [user.username, user.name, piStatus, user.organization, user.eracommons, user.orcid, user.google_email, user.contact_email, user.expiration].concat(datasetList);
+      contents.push(row.join("\t"));
+
+      // if DAC: add users under PI
+      if (this.props.whoAmI.iam === "DAC") {
+        if (!piToUsersCache[piUsername]) {
+          piToUsersCache[piUsername] = await getUsersForPI(this.props.token, piUsername);
+        }
+
+        for (var u of piToUsersCache[piUsername]) {
+          // dataset access is the same as PI for now
+          // let datasetList = this.props.allDataSets.map(
+          //   d => u.datasets.includes(d.phsid) ? "yes" : "no"
+          // );
+          let row = [u.username, u.name, piUsername, u.organization, u.eracommons, u.orcid, u.google_email, u.contact_email, u.expiration].concat(datasetList);
+          contents.push(row.join("\t"));
+        }
+      }
+    }
+
+    const blob = new Blob(
+      [contents.join("\n")],
+      { type: 'text/tab-separated-values' }
+    );
+    FileSaver.saveAs(blob, fileName);
+    this.setState({ exporting: false });
   }
 
 /**
@@ -203,83 +274,92 @@ class UserTable extends React.Component {
           this.state.loading ?
           <Spinner />
           :
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <Table
-                ref={this._table}
-                width={width}
-                height={this.userTableSize + this.expandTableSize}
-                headerHeight={ROW_HEIGHT}
-                rowHeight={this.getRowHeight}
-                rowCount={data.length}
-                rowGetter={({ index }) => data[index]}
-                // only DACs can expand the user rows:
-                onRowClick={this.props.whoAmI.iam === 'DAC' ? this.toggleRow : null}
-                rowRenderer={this.userRowRenderer}
-              >
-                <Column
-                  label='Username'
-                  dataKey='username'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                <Column
-                  label='Name'
-                  dataKey='name'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                <Column
-                  label='Organization'
-                  dataKey='organization'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                <Column
-                  label='Contact Email'
-                  dataKey='contact_email'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                <Column
-                  label='eRA Commons'
-                  dataKey='eracommons'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                <Column
-                  label='Google Email'
-                  dataKey='google_email'
-                  width={MAX_COLUMN_WIDTH}
-                />
-                {
-                  this.props.whoAmI.iam === 'DAC' && (
-                    <Column
-                      label='Expiration'
-                      dataKey='expiration'
-                      width={MAX_COLUMN_WIDTH}
-                    />
-                  )
-                }
-                <Column
-                  label='Actions'
-                  dataKey='actions'
-                  width={MAX_COLUMN_WIDTH}
-                  cellRenderer={({ rowIndex }) => (
-                    <React.Fragment>
-                      <Button
-                        className='user-table__button'
-                        onClick={(event) => this.openPopup(event, data[rowIndex], false)}
-                        buttonType='primary'
-                        label='Edit'
+          <div>
+            <Button
+              // className='user-table__export-button'
+              label={this.state.exporting ? 'Exporting...' : 'Export as TSV'}
+              // buttonType='primary'
+              onClick={() => {this.exportUserData(); this.setState({ exporting: true })}}
+              enabled={!this.state.exporting}
+            />
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <Table
+                  ref={this._table}
+                  width={width}
+                  height={this.userTableSize + this.expandTableSize}
+                  headerHeight={ROW_HEIGHT}
+                  rowHeight={this.getRowHeight}
+                  rowCount={data.length}
+                  rowGetter={({ index }) => data[index]}
+                  // only DACs can expand the user rows:
+                  onRowClick={this.props.whoAmI.iam === 'DAC' ? this.toggleRow : null}
+                  rowRenderer={this.userRowRenderer}
+                >
+                  <Column
+                    label='Username'
+                    dataKey='username'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Name'
+                    dataKey='name'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Organization'
+                    dataKey='organization'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Contact Email'
+                    dataKey='contact_email'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='eRA Commons'
+                    dataKey='eracommons'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  <Column
+                    label='Google Email'
+                    dataKey='google_email'
+                    width={MAX_COLUMN_WIDTH}
+                  />
+                  {
+                    this.props.whoAmI.iam === 'DAC' && (
+                      <Column
+                        label='Expiration'
+                        dataKey='expiration'
+                        width={MAX_COLUMN_WIDTH}
                       />
-                      <Button
-                        className='user-table__button'
-                        onClick={(event) => this.openPopup(event, data[rowIndex], true)}
-                        buttonType='primary'
-                        label='Delete'
-                      />
-                    </React.Fragment>
-                  )}
-                />
-              </Table>
-            )}
-          </AutoSizer>
+                    )
+                  }
+                  <Column
+                    label='Actions'
+                    dataKey='actions'
+                    width={MAX_COLUMN_WIDTH}
+                    cellRenderer={({ rowIndex }) => (
+                      <React.Fragment>
+                        <Button
+                          className='user-table__button'
+                          onClick={(event) => this.openPopup(event, data[rowIndex], false)}
+                          buttonType='primary'
+                          label='Edit'
+                        />
+                        <Button
+                          className='user-table__button'
+                          onClick={(event) => this.openPopup(event, data[rowIndex], true)}
+                          buttonType='primary'
+                          label='Delete'
+                        />
+                      </React.Fragment>
+                    )}
+                  />
+                </Table>
+              )}
+            </AutoSizer>
+          </div>
         }
         {
           this.state.selectedUser && this.state.deletePopup && (
@@ -348,11 +428,13 @@ class UserTable extends React.Component {
 UserTable.propTypes = {
   data: PropTypes.array.isRequired,
   updateTable: PropTypes.func.isRequired,
+  allDataSets: PropTypes.array,
   token: PropTypes.object,
 };
 
 UserTable.defaultProps = {
   token: null,
+  allDataSets: [],
 };
 
 export default UserTable;
