@@ -118,11 +118,8 @@ class UserTable extends React.Component {
     )
     let contents = [headers.join("\t")];
     for (var user of this.props.data) {
-      let piUsername = user.username;;
-      console.log(`  Exporting ${piUsername}`);
-
       // if DAC: add PI; if PI: add user
-      // name of the user's PI, or "PI" if user is a PI:
+      // piStatus: name of the user's PI, or "PI" if user is a PI:
       let piStatus = this.props.whoAmI.iam === "DAC" ? "PI" : this.props.user.name;
       let datasetList = this.props.allDataSets.map(
         d => user.datasets.includes(d.phsid) ? "yes" : "no"
@@ -132,6 +129,9 @@ class UserTable extends React.Component {
 
       // if DAC: add users under PI
       if (this.props.whoAmI.iam === "DAC") {
+        let piUsername = user.username;;
+        console.log(`  Exporting ${piUsername}`);
+
         if (!piToUsersCache[piUsername]) {
           piToUsersCache[piUsername] = await getUsersForPI(this.props.token, piUsername);
         }
@@ -184,7 +184,7 @@ class UserTable extends React.Component {
             :
             this.state.expandedUserChildren.length === 0 ?
               <div style={{ padding: '10px', fontStyle: 'italic' }}>
-                This PI has not added any users yet.
+                This Principal Investigator has not added any users yet.
               </div>
             :
             <AutoSizer disableHeight>
@@ -276,9 +276,7 @@ class UserTable extends React.Component {
           :
           <div>
             <Button
-              // className='user-table__export-button'
               label={this.state.exporting ? 'Exporting...' : 'Export as TSV'}
-              // buttonType='primary'
               onClick={() => {this.exportUserData(); this.setState({ exporting: true })}}
               enabled={!this.state.exporting}
             />
