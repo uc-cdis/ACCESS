@@ -6,6 +6,7 @@
     "@gen3/ui-component": "0.0.26",
     "babel-loader": "^8.0.5",
     "connected-react-router": "^6.3.2",
+    "file-saver": "^2.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",

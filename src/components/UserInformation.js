@@ -11,6 +11,25 @@ const usernameOptions = [
   { value: 'eracommons', label: 'eRA Commons ID' }
 ];
 
+const fieldLabels = {
+  'usernameOption': 'ACCESS Username',
+  'name': 'Name',
+  'organization': 'Organization',
+  'eracommons': 'eRA Commons ID',
+  'orcid': 'ORCID',
+  'contact_email': 'Contact Email',
+  'google_email': 'Google Email',
+  'expiration': 'Access Expiration Date',
+};
+
+// required fields for user creation
+const requiredFields = [
+  'name',
+  'usernameOption',
+  'organization',
+  'expiration'
+];
+
 class UserInformation extends React.Component {
   constructor(props) {
     super(props);
@@ -110,21 +129,31 @@ class UserInformation extends React.Component {
     }
   }
 
+  isFieldRequired = field => {
+    return requiredFields.includes(field)
+    // field selected as username is required:
+    || (this.state.usernameOption && this.state.usernameOption.value === field);
+  }
+
+  getAnnotatedFieldLabel = field => {
+    let label = fieldLabels[field];
+    // append a star to the label if the field is required
+    return this.isFieldRequired(field) ? `${label} *` : label;
+  }
+
   checkFieldsAreValid = () => {
-    let requiredStringFields = ['eracommons', 'orcid', 'name', 'contact_email', 'google_email', 'usernameOption'];
-    const requiredDacFields = ['organization', 'expiration'];
-    if (this.props.whoAmI.iam === 'DAC') {
-      requiredStringFields = requiredStringFields.concat(requiredDacFields);
-    }
     let invalidFields = [];
-    for (var i = 0; i < requiredStringFields.length; i++) {
-      let val = this.state[requiredStringFields[i]] || false;
-      try {
-        val = val.trim();
+    for (var field in this.state) {
+      if (this.isFieldRequired(field)) {
+        let val = this.state[field] || false;
+        try {
+          val = val.trim();
+        }
+        catch (e) {}
+        if (!Boolean(val)) {  // if field is empty: add to invalid fields
+          invalidFields.push(field)
+        }
       }
-      catch (e) {}
-      if (!Boolean(val))  // if field is empty: add to invalid fields
-        invalidFields.push(requiredStringFields[i])
     }
     if (invalidFields.length > 0)
       return `You have not provided a value for the following required fields: ${invalidFields.join(', ')}.`;
@@ -144,7 +173,7 @@ class UserInformation extends React.Component {
         <ul className='form-info__details'>
           <h2>User Details</h2>
           <li className='form-info__detail'>
-            <label>ACCESS Username</label>
+            <label>{this.getAnnotatedFieldLabel('usernameOption')}</label>
             <Select
               className='form-info__detail-select-container'
               classNamePrefix='form-info__detail-select'
@@ -156,54 +185,81 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>Name</label>
-            <input className='form-info__detail-input' type='text' value={this.state.name} onChange={this.setName} />
+            <label>{this.getAnnotatedFieldLabel('name')}</label>
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.name}
+              onChange={this.setName}
+            />
           </li>
           <li className='form-info__detail'>
-            <label>Organization</label>
-            <input className={'form-info__detail-input'} type='text' value={this.state.organization} onChange={this.setOrganization} readOnly={this.props.whoAmI.iam === 'PI'} />
+            <label>{this.getAnnotatedFieldLabel('organization')}</label>
+            <input
+              className={'form-info__detail-input'}
+              type='text'
+              value={this.state.organization}
+              onChange={this.setOrganization}
+              readOnly={this.props.whoAmI.iam === 'PI'}
+            />
           </li>
           <li className='form-info__detail'>
-            <label>eRA Commons ID</label>
+            <label>{this.getAnnotatedFieldLabel('eracommons')}</label>
             <input
               className='form-info__detail-input'
               type='text'
               value={this.state.eracommons}
               onChange={this.seteRA}
-              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.eracommons}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username === this.state.eracommons}
             />
           </li>
           <li className='form-info__detail'>
-            <label>ORCID</label>
-            <input className='form-info__detail-input' type='text' value={this.state.orcid} onChange={this.setORCID} />
+            <label>{this.getAnnotatedFieldLabel('orcid')}</label>
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.orcid}
+              onChange={this.setORCID}
+            />
           </li>
           <li className='form-info__detail'>
-            <label>Contact Email</label>
-            <input className='form-info__detail-input' type='text' value={this.state.contact_email} onChange={this.setContactEmail} />
+            <label>{this.getAnnotatedFieldLabel('contact_email')}</label>
+            <input
+              className='form-info__detail-input'
+              type='text'
+              value={this.state.contact_email}
+              onChange={this.setContactEmail}
+            />
           </li>
           <li className='form-info__detail'>
-            <label>Google Email</label>
+            <label>{this.getAnnotatedFieldLabel('google_email')}</label>
             <input
               className='form-info__detail-input'
               type='text'
               value={this.state.google_email}
               onChange={this.setGoogleEmail}
-              readOnly={this.props.selectedUser.username && this.props.selectedUser.username == this.state.google_email}
+              readOnly={this.props.selectedUser.username && this.props.selectedUser.username === this.state.google_email}
             />
           </li>
           {
             this.props.whoAmI.iam === 'DAC' && (
               <li className='form-info__detail'>
-                <label>Access Expiration Date</label>
-                <input className='form-info__detail-input' type='text' value={this.state.expiration} onChange={this.setExpiration} placeholder='YYYY-MM-DD' />
+                <label>{this.getAnnotatedFieldLabel('expiration')}</label>
+                <input
+                  className='form-info__detail-input'
+                  type='text'
+                  value={this.state.expiration}
+                  onChange={this.setExpiration} placeholder='YYYY-MM-DD'
+                />
               </li>
             )
           }
+        <p className='form-info__instructions'>*: required fields</p>
         </ul>
         <h2>Dataset Access</h2>
         <ul className='form-info__user-access'>
           {
-            allDataSets && allDataSets.sort((a, b) => a.name !== b.name ? a.name < b.name ? -1 : 1 : 0).map((project, i) => {
+            allDataSets && allDataSets.map((project, i) => {
               return (
                 <li key={i}>
                   <input

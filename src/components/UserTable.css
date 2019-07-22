@@ -10,6 +10,10 @@
   margin: 10px 0;
 }
 
+.user-table__export-button {
+  margin: auto
+}
+
 .ReactVirtualized__Table__row {
   border-top: 2px solid var(--g3-color__silver);
   cursor: pointer;

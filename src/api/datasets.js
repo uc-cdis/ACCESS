@@ -18,6 +18,8 @@ export const getDatasets = async (token) => {
         console.error(data);
         return [];
       }
+      // sort by alphabetical order
+      data = data.sort((a, b) => a.name.localeCompare(b.name))
       console.log('datasets are', data)
       return data;
     })
