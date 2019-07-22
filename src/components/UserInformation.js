@@ -11,10 +11,24 @@ const usernameOptions = [
   { value: 'eracommons', label: 'eRA Commons ID' }
 ];
 
-// required for any user creation:
-const requiredFields = ['name', 'usernameOption'];
-// required when a DAC creates a PI:
-const requiredDacFields = ['organization', 'expiration'];
+const fieldLabels = {
+  'usernameOption': 'ACCESS Username',
+  'name': 'Name',
+  'organization': 'Organization',
+  'eracommons': 'eRA Commons ID',
+  'orcid': 'ORCID',
+  'contact_email': 'Contact Email',
+  'google_email': 'Google Email',
+  'expiration': 'Access Expiration Date',
+};
+
+// required fields for user creation
+const requiredFields = [
+  'name',
+  'usernameOption',
+  'organization',
+  'expiration'
+];
 
 class UserInformation extends React.Component {
   constructor(props) {
@@ -117,9 +131,14 @@ class UserInformation extends React.Component {
 
   isFieldRequired = field => {
     return requiredFields.includes(field)
-    || requiredDacFields.includes(field)
     // field selected as username is required:
     || (this.state.usernameOption && this.state.usernameOption.value === field);
+  }
+
+  getAnnotatedFieldLabel = field => {
+    let label = fieldLabels[field];
+    // append a star to the label if the field is required
+    return this.isFieldRequired(field) ? `${label} *` : label;
   }
 
   checkFieldsAreValid = () => {
@@ -154,7 +173,7 @@ class UserInformation extends React.Component {
         <ul className='form-info__details'>
           <h2>User Details</h2>
           <li className='form-info__detail'>
-            <label>ACCESS Username {this.isFieldRequired('usernameOption') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('usernameOption')}</label>
             <Select
               className='form-info__detail-select-container'
               classNamePrefix='form-info__detail-select'
@@ -166,7 +185,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>Name {this.isFieldRequired('name') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('name')}</label>
             <input
               className='form-info__detail-input'
               type='text'
@@ -175,7 +194,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>Organization {this.isFieldRequired('organization') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('organization')}</label>
             <input
               className={'form-info__detail-input'}
               type='text'
@@ -185,7 +204,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>eRA Commons ID {this.isFieldRequired('eracommons') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('eracommons')}</label>
             <input
               className='form-info__detail-input'
               type='text'
@@ -195,7 +214,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>ORCID {this.isFieldRequired('orcid') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('orcid')}</label>
             <input
               className='form-info__detail-input'
               type='text'
@@ -204,7 +223,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>Contact Email {this.isFieldRequired('contact_email') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('contact_email')}</label>
             <input
               className='form-info__detail-input'
               type='text'
@@ -213,7 +232,7 @@ class UserInformation extends React.Component {
             />
           </li>
           <li className='form-info__detail'>
-            <label>Google Email {this.isFieldRequired('google_email') ? '*' : ''}</label>
+            <label>{this.getAnnotatedFieldLabel('google_email')}</label>
             <input
               className='form-info__detail-input'
               type='text'
@@ -225,7 +244,7 @@ class UserInformation extends React.Component {
           {
             this.props.whoAmI.iam === 'DAC' && (
               <li className='form-info__detail'>
-                <label>Access Expiration Date {this.isFieldRequired('expiration') ? '*' : ''}</label>
+                <label>{this.getAnnotatedFieldLabel('expiration')}</label>
                 <input
                   className='form-info__detail-input'
                   type='text'

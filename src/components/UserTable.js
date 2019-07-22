@@ -276,6 +276,7 @@ class UserTable extends React.Component {
           :
           <div>
             <Button
+              className='user-table__export-button'
               label={this.state.exporting ? 'Exporting...' : 'Export as TSV'}
               onClick={() => {this.exportUserData(); this.setState({ exporting: true })}}
               enabled={!this.state.exporting}
