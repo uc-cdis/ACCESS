@@ -26,7 +26,7 @@ class Login extends React.Component {
     }
     const responseValues = fragments[1];
     const tokenParams = querystring.parse(responseValues);
-    if (tokenParams && !tokenParams.error) {
+    if (tokenParams && !tokenParams.error && tokenParams.nonce === window.sessionStorage.getItem('nonce')) {
       this.props.login(tokenParams);
     }
   }
