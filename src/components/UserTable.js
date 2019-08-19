@@ -112,7 +112,7 @@ class UserTable extends React.Component {
     const fileName = `datastage_users_${dateString}.tsv`;
 
     // generate TSV
-    let headers = ["Username", "Name", "PI", "Organization", "eRA Commons", "ORCID", "Google Email", "Contact Email", "Access Expiration Date"];
+    let headers = ["Username", "Name", "PI", "Organization", "NIH Login", "ORCID", "Google Email", "Contact Email", "Access Expiration Date"];
     headers = headers.concat(
       this.props.allDataSets.map(d => `${d.name} (${d.phsid})`)
     )
@@ -219,7 +219,7 @@ class UserTable extends React.Component {
                     width={MAX_COLUMN_WIDTH}
                   />
                   <Column
-                    label='eRA Commons'
+                    label='NIH Login'
                     dataKey='eracommons'
                     width={MAX_COLUMN_WIDTH}
                   />
@@ -316,7 +316,7 @@ class UserTable extends React.Component {
                     width={MAX_COLUMN_WIDTH}
                   />
                   <Column
-                    label='eRA Commons'
+                    label='NIH Login'
                     dataKey='eracommons'
                     width={MAX_COLUMN_WIDTH}
                   />

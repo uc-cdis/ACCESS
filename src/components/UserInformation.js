@@ -6,21 +6,21 @@ import { postUser } from '../api/users';
 import Select from 'react-select';
 import './FormInformation.css';
 
-const usernameOptions = [
-  { value: 'google_email', label: 'Google email' },
-  { value: 'eracommons', label: 'eRA Commons ID' }
-];
-
 const fieldLabels = {
   'usernameOption': 'ACCESS Username',
   'name': 'Name',
   'organization': 'Organization',
-  'eracommons': 'eRA Commons ID',
+  'eracommons': 'NIH Login',
   'orcid': 'ORCID',
   'contact_email': 'Contact Email',
   'google_email': 'Google Email',
   'expiration': 'Access Expiration Date',
 };
+
+const usernameOptions = [
+  { value: 'google_email', label: fieldLabels.google_email },
+  { value: 'eracommons', label: fieldLabels.eracommons }
+];
 
 // required fields for user creation
 const requiredFields = [
