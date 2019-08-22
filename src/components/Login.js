@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
+import jwtDecode from 'jwt-decode';
 import Spinner from './Spinner';
 
 class Login extends React.Component {
@@ -26,9 +27,13 @@ class Login extends React.Component {
     }
     const responseValues = fragments[1];
     const tokenParams = querystring.parse(responseValues);
-    if (tokenParams && !tokenParams.error && tokenParams.nonce === window.sessionStorage.getItem('nonce')) {
-      this.props.login(tokenParams);
-    }
+    const decodedToken = jwtDecode(tokenParams.id_token);
+	  if (decodedToken.nonce && decodedToken.nonce !== window.sessionStorage.getItem('nonce')) {
+	    console.log('Error: nonce does not match');
+	    window.location = origin;
+	    return;
+	  }
+    this.props.login(tokenParams);
   }
 
   render() {
