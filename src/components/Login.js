@@ -28,11 +28,11 @@ class Login extends React.Component {
     const responseValues = fragments[1];
     const tokenParams = querystring.parse(responseValues);
     const decodedToken = jwtDecode(tokenParams.id_token);
-	  if (decodedToken.nonce && decodedToken.nonce !== window.sessionStorage.getItem('nonce')) {
-	    console.log('Error: nonce does not match');
-	    window.location = origin;
-	    return;
-	  }
+    if (decodedToken.nonce && decodedToken.nonce !== window.sessionStorage.getItem('nonce')) {
+      console.log('Error: nonce does not match');
+      window.location = origin;
+      return;
+    }
     this.props.login(tokenParams);
   }
 
