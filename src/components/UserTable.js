@@ -99,8 +99,8 @@ class UserTable extends React.Component {
       await sleepMS(100);
       slept += 100;
       if (slept >= timeoutSecs * 1000) {
-        console.error(`Did not receive users and datasets for export after ${timeoutSecs} secs - giving up`);
-        return;
+        console.error(`Did not receive users and datasets for export after ${timeoutSecs} secs - exporting without waiting more`);
+        break;
       }
     }
 
