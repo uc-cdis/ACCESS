@@ -10,10 +10,20 @@ jobs:
     - uses: actions/checkout@master
 
     - name: NPM Build
+      if: github.ref == 'refs/heads/master'
       uses: actions/npm@master
       env:
         REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
         REACT_APP_REDIRECT_URL: https://access.datastage.io/login
+      with:
+        args: ci && npm run build
+
+    - name: QA NPM Build
+      if: github.ref != 'refs/heads/master'
+      uses: actions/npm@master
+      env:
+        REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+        REACT_APP_REDIRECT_URL: https://qa-access.planx-pla.net/login
       with:
         args: ci && npm run build
 
