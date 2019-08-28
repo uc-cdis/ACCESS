@@ -1,5 +1,7 @@
+// Backend API URL. By default, use QA backend
+const apiHost = process.env.REACT_APP_API_HOST || 'https://qa-access-api.planx-pla.net';
+
 const authHost = 'https://gen3.datastage.io';
-const apiHost = 'https://access-api.datastage.io';
 const oauthResponseType='id_token+token';
 const oauthScope='openid+user'
 const authUrl = `${authHost}/user/oauth2/authorize`;
