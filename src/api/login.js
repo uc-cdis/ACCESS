@@ -50,6 +50,7 @@ export const whoAmI = async (accessToken) => {
         console.error(data);
         return {};
       }
+      console.log("i am", data)
       return data;
     })
     .catch(error => {

@@ -1,0 +1,56 @@
+on: push
+
+name: Build and Deploy to S3
+
+jobs:
+  nPMBuild:
+    name: NPM Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: NPM Build
+      if: github.ref == 'refs/heads/master'
+      uses: actions/npm@master
+      env:
+        REACT_APP_API_HOST: https://access-api.datastage.io
+        REACT_APP_AUTH_HOST: https://gen3.datastage.io
+        REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+        REACT_APP_REDIRECT_URL: https://access.datastage.io/login
+      with:
+        args: ci && npm run build
+
+    - name: QA NPM Build
+      if: github.ref != 'refs/heads/master'
+      uses: actions/npm@master
+      env:
+        REACT_APP_API_HOST: https://qa-access-api.planx-pla.net
+        REACT_APP_AUTH_HOST: https://staging.datastage.io
+        REACT_APP_CLIENT_ID: ${{ secrets.QA_REACT_APP_CLIENT_ID }}
+        REACT_APP_REDIRECT_URL: https://qa-access.planx-pla.net/login
+      with:
+        args: ci && npm run build
+
+    - name: Deploy to S3
+      if: github.ref == 'refs/heads/master'
+      uses: actions/aws/cli@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        BUCKET: access.datastage.io
+      with:
+        entrypoint: sh
+        args: -l -c "ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/.
+          && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read"
+
+    - name: QA Deploy to S3
+      if: github.ref != 'refs/heads/master'
+      uses: actions/aws/cli@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.QA_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.QA_AWS_SECRET_ACCESS_KEY }}
+        BUCKET: qa-access.planx-pla.net
+      with:
+        entrypoint: sh
+        args: -l -c "ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/.
+          && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read"
