@@ -86,6 +86,7 @@ export const getUser = (token) =>
  */
 export const loginRedirect = (idp, location) => {
   const redirectUri = encodeURIComponent(`${config.redirectUrl}`);
+  const nonce = sessionStorage.getItem('nonce');
   sessionStorage.setItem('origin', location);
-  window.location = `${config.authUrl}?idp=${idp}&client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}&nonce=access`;
+  window.location = `${config.authUrl}?idp=${idp}&client_id=${config.clientId}&redirect_uri=${redirectUri}&response_type=${config.oauthResponseType}&scope=${config.oauthScope}&nonce=${nonce}`;
 };
