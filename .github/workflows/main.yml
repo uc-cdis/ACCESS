@@ -11,7 +11,7 @@ jobs:
 
     - name: NPM Build
       if: github.ref == 'refs/heads/master'
-      uses: actions/npm@master
+      uses: actions/setup-node@master
       env:
         REACT_APP_API_HOST: https://access-api.datastage.io
         REACT_APP_AUTH_HOST: https://gen3.datastage.io
@@ -22,7 +22,7 @@ jobs:
 
     - name: QA NPM Build
       if: github.ref != 'refs/heads/master'
-      uses: actions/npm@master
+      uses: actions/setup-node@master
       env:
         REACT_APP_API_HOST: https://qa-access-api.planx-pla.net
         REACT_APP_AUTH_HOST: https://staging.datastage.io
