@@ -112,18 +112,28 @@ class UserTable extends React.Component {
     const fileName = `datastage_users_${dateString}.tsv`;
 
     // generate TSV
+    let allDataSets = this.props.allDataSets;
+    if (this.props.whoAmI.iam === "PI") {
+      // if user is a PI, only show the datasets user has access to
+      allDataSets = allDataSets.filter(d => this.props.whoAmI.datasets.includes(d.phsid))
+    }
+
     let headers = ["Username", "Name", "PI", "Organization", "eRA Commons", "ORCID", "Google Email", "Contact Email", "Access Expiration Date"];
     headers = headers.concat(
-      this.props.allDataSets.map(d => `${d.name} (${d.phsid})`)
+      allDataSets.map(d => `${d.name} (${d.phsid})`)
     )
+
     let contents = [headers.join("\t")];
     for (var user of this.props.data) {
       // if DAC: add PI; if PI: add user
       // piStatus: name of the user's PI, or "PI" if user is a PI:
       let piStatus = this.props.whoAmI.iam === "DAC" ? "PI" : this.props.user.name;
-      let datasetList = this.props.allDataSets.map(
-        d => user.datasets.includes(d.phsid) ? "yes" : "no"
+
+      let datasetList = allDataSets.map(
+        // datasets of PI's users are the same as PI for now
+        d => user.datasets.includes(d.phsid) || this.props.whoAmI.iam === "PI" ? "yes" : "no"
       );
+
       let row = [user.username, user.name, piStatus, user.organization, user.eracommons, user.orcid, user.google_email, user.contact_email, user.expiration].concat(datasetList);
       contents.push(row.join("\t"));
 
@@ -138,7 +148,7 @@ class UserTable extends React.Component {
 
         for (var u of piToUsersCache[piUsername]) {
           // dataset access is the same as PI for now
-          // let datasetList = this.props.allDataSets.map(
+          // let datasetList = allDataSets.map(
           //   d => u.datasets.includes(d.phsid) ? "yes" : "no"
           // );
           let row = [u.username, u.name, piUsername, u.organization, u.eracommons, u.orcid, u.google_email, u.contact_email, u.expiration].concat(datasetList);
