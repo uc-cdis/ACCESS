@@ -11,25 +11,21 @@ jobs:
 
     - name: NPM Build
       if: github.ref == 'refs/heads/master'
-      uses: actions/npm@master
       env:
         REACT_APP_API_HOST: https://access-api.datastage.io
         REACT_APP_AUTH_HOST: https://gen3.datastage.io
         REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
         REACT_APP_REDIRECT_URL: https://access.datastage.io/login
-      with:
-        args: ci && npm run build
+      run: npm ci && npm run build
 
     - name: QA NPM Build
       if: github.ref != 'refs/heads/master'
-      uses: actions/npm@master
       env:
         REACT_APP_API_HOST: https://qa-access-api.planx-pla.net
         REACT_APP_AUTH_HOST: https://staging.datastage.io
         REACT_APP_CLIENT_ID: ${{ secrets.QA_REACT_APP_CLIENT_ID }}
         REACT_APP_REDIRECT_URL: https://qa-access.planx-pla.net/login
-      with:
-        args: ci && npm run build
+      run: npm ci && npm run build
 
     - name: Deploy to S3
       if: github.ref == 'refs/heads/master'
