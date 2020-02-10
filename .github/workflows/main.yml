@@ -23,7 +23,7 @@ jobs:
       if: github.ref != 'refs/heads/master'
       env:
         REACT_APP_API_HOST: https://qa-access-api.planx-pla.net
-        REACT_APP_AUTH_HOST: https://staging.datastage.io
+        REACT_APP_AUTH_HOST: https://staging.gen3.biodatacatalyst.nhlbi.nih.gov
         REACT_APP_CLIENT_ID: ${{ secrets.QA_REACT_APP_CLIENT_ID }}
         REACT_APP_REDIRECT_URL: https://qa-access.planx-pla.net/login
       run: npm ci && npm run build
