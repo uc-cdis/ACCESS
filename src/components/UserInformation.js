@@ -163,7 +163,7 @@ class UserInformation extends React.Component {
 
   render() {
     var { allDataSets } = this.props;
-    // users get the same project access as the PI who added them
+    // users can only have a subset of the PI's access who added them
     if (this.props.whoAmI.iam === 'PI') {
       allDataSets = allDataSets.filter(project => this.props.whoAmI.datasets.includes(project.phsid));
     }
@@ -265,9 +265,8 @@ class UserInformation extends React.Component {
                   <input
                     type='checkbox'
                     key={i}
-                    checked={this.state.datasets.includes(project.phsid) || this.props.whoAmI.iam === 'PI'}
+                    checked={this.state.datasets.includes(project.phsid)}
                     onChange={() => this.selectDataSet(project.phsid)}
-                    disabled={this.props.whoAmI.iam === 'PI'}
                   />
                   {project.name} ({project.phsid})
                   </li>
