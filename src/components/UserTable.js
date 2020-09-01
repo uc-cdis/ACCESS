@@ -131,7 +131,7 @@ class UserTable extends React.Component {
 
       let datasetList = allDataSets.map(
         // datasets of PI's users are the same as PI for now
-        d => user.datasets.includes(d.phsid) || this.props.whoAmI.iam === "PI" ? "yes" : "no"
+        d => user.datasets.includes(d.phsid) || this.props.whoAmI.iam === "PI" ? "yes" : "no" // eslint-disable-line no-loop-func
       );
 
       let row = [user.username, user.name, piStatus, user.organization, user.eracommons, user.orcid, user.google_email, user.contact_email, user.expiration].concat(datasetList);
