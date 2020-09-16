@@ -3,7 +3,6 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from '@gen3/ui-component/dist/components/Header';
 import { Provider } from 'react-redux'
 import configureStore from '../store';
-import gen3Logo from '../images/gen3.png';
 import ReduxHomepage from './ReduxHomepage';
 import ReduxManageUsers from './ReduxManageUsers';
 import ReduxLogin from './ReduxLogin';
@@ -15,7 +14,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <div className='app'>
-          <Header title='User Access' logoSrc={gen3Logo} />
+          <Header title='User Access' />
           <BrowserRouter>
             <Switch>
               <Route
