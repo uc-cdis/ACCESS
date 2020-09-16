@@ -15,7 +15,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <div className='app'>
-          <Header title='STAGE ACCESS' logoSrc={gen3Logo} />
+          <Header title='User Access' logoSrc={gen3Logo} />
           <BrowserRouter>
             <Switch>
               <Route
