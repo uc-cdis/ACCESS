@@ -29,7 +29,7 @@ jobs:
       run: npm ci && npm run build
 
     - name: TEST NPM Build
-      if: github.ref != 'refs/heads/feat/per-user-auth'
+      if: github.ref == 'refs/heads/feat/per-user-auth'
       env:
         REACT_APP_API_HOST: https://qa-anvil.planx-pla.net/access-backend
         REACT_APP_AUTH_HOST: https://qa-anvil.planx-pla.net
@@ -54,7 +54,7 @@ jobs:
       run: ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read
 
     - name: TEST Deploy to S3
-      if: github.ref != 'refs/heads/feat/per-user-auth'
+      if: github.ref == 'refs/heads/feat/per-user-auth'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
