@@ -8,6 +8,7 @@
 
 .user-table__button {
   margin: 10px 0;
+  min-width: 50px;
 }
 
 .user-table__export-button {

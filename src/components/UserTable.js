@@ -109,12 +109,13 @@ class UserTable extends React.Component {
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const day = ("0" + date.getDate()).slice(-2);
     const dateString = `${date.getFullYear()}-${month}-${day}`;
-    const fileName = `datastage_users_${dateString}.tsv`;
+    const fileName = `users_${dateString}.tsv`;
 
     // generate TSV
     let allDataSets = this.props.allDataSets;
     if (this.props.whoAmI.iam === "PI") {
       // if user is a PI, only show the datasets user has access to
+      //
       allDataSets = allDataSets.filter(d => this.props.whoAmI.datasets.includes(d.phsid))
     }
 
@@ -130,8 +131,7 @@ class UserTable extends React.Component {
       let piStatus = this.props.whoAmI.iam === "DAC" ? "PI" : this.props.user.name;
 
       let datasetList = allDataSets.map(
-        // datasets of PI's users are the same as PI for now
-        d => user.datasets.includes(d.phsid) || this.props.whoAmI.iam === "PI" ? "yes" : "no"
+        d => user.datasets.includes(d.phsid) ? "yes" : "no" // eslint-disable-line no-loop-func
       );
 
       let row = [user.username, user.name, piStatus, user.organization, user.eracommons, user.orcid, user.google_email, user.contact_email, user.expiration].concat(datasetList);
@@ -147,7 +147,7 @@ class UserTable extends React.Component {
         }
 
         for (var u of piToUsersCache[piUsername]) {
-          // dataset access is the same as PI for now
+          // dataset access is NOT the same as PI for now
           // let datasetList = allDataSets.map(
           //   d => u.datasets.includes(d.phsid) ? "yes" : "no"
           // );
