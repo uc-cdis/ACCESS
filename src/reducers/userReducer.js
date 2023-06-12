@@ -4,7 +4,7 @@ const initialState = {
   whoAmI: null,
 };
 
-export default (state = initialState, action) => {
+const userReducer (state = initialState, action) => {
   switch (action.type) {
     case 'RECEIVE_USER':
     return {
@@ -25,3 +25,5 @@ export default (state = initialState, action) => {
     return state
   }
 }
+
+export default userReducer;
