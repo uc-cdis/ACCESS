@@ -10,6 +10,9 @@ jobs:
     - uses: actions/checkout@master
     - uses: chrislennon/action-aws-cli@1.1  # install AWS CLI
 
+    - name: Print versions
+      run: node --version; npm --version; nvm --version
+
     - name: NPM Build
       if: github.ref == 'refs/heads/master'
       env:
