@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import querystring from 'querystring';
+import querystring from 'querystring-es3';
 import jwtDecode from 'jwt-decode';
 import Spinner from './Spinner';
 
