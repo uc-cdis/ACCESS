@@ -33,5 +33,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "overrides":{
+    "renderkid": {
+      "ansi-regex": "^3.0.1"
+    }
+  }
 }
