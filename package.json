@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@gen3/ui-component": "0.0.26",
-    "babel-loader": "^8.0.5",
+    "babel-loader": "^8.3.0",
     "connected-react-router": "^6.3.2",
     "file-saver": "^2.0.2",
     "jwt-decode": "^2.2.0",
