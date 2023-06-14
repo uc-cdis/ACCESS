@@ -99,7 +99,6 @@
   background: var(--g3-color__silver);
 }
 
-// defines check in checkbox
 .form-info__user-access input[type='checkbox']:after {
   content: '';
   width: 15%;

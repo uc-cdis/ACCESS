@@ -22,4 +22,9 @@ module.exports = {
   userApi,
   apiHost,
   loginOptionsUrl,
+  resolve: {
+      fallback: {
+          querystring: require.resolve("querystring-es3")
+      }
+  }
 };
