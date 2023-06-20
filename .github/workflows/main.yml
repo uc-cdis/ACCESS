@@ -16,7 +16,7 @@ jobs:
     - name: NPM Build
       if: github.ref == 'refs/heads/master'
       env:
-        REACT_APP_API_HOST: https://access-api.datastage.io
+        REACT_APP_API_HOST: https://gen3.biodatacatalyst.nhlbi.nih.gov/access-backend
         REACT_APP_AUTH_HOST: https://gen3.biodatacatalyst.nhlbi.nih.gov
         REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
         REACT_APP_REDIRECT_URL: https://access.datastage.io/login
