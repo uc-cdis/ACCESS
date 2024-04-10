@@ -1,7 +1,7 @@
 ACCESS
 ======
 
-This is the frontend of ACCESS. ACCESS is is a user access managment tool. It it used to both store and manage user authentication and access criteria info of users added to the system, specifically for members of BDC. ACCESS, specifically, is managing access to studies and datasets for its users. 
+This is the frontend of ACCESS. ACCESS is a user access managment tool. It is used to both store and manage user authentication and access criteria info of users added to the system, specifically for members of BDC. ACCESS, specifically, is managing access to studies and datasets for its users. 
 
 # Running locally
 
