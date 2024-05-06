@@ -31,6 +31,15 @@ jobs:
         REACT_APP_REDIRECT_URL: https://qa-access.planx-pla.net/login
       run: npm ci && npm run build
 
+    - name: TEST NPM Build
+      if: github.ref == 'refs/heads/feat/per-user-auth'
+      env:
+        REACT_APP_API_HOST: https://qa-anvil.planx-pla.net/access-backend
+        REACT_APP_AUTH_HOST: https://qa-anvil.planx-pla.net
+        REACT_APP_CLIENT_ID: ${{ secrets.TEST_REACT_APP_CLIENT_ID }}
+        REACT_APP_REDIRECT_URL: https://access-test.planx-pla.net/login
+      run: npm ci && npm run build
+
     - name: Deploy to S3
       if: github.ref == 'refs/heads/master'
       env:
@@ -47,4 +56,12 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.QA_AWS_SECRET_ACCESS_KEY }}
         BUCKET: qa-access.planx-pla.net
         AWS_EC2_METADATA_DISABLED: true
+      run: ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read
+
+    - name: TEST Deploy to S3
+      if: github.ref == 'refs/heads/feat/per-user-auth'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+        BUCKET: access-test.planx-pla.net
       run: ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete --acl public-read
