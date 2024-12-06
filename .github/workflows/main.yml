@@ -48,3 +48,4 @@ jobs:
         BUCKET: qa-access.planx-pla.net
         AWS_EC2_METADATA_DISABLED: true
       run: ls -al; cd build; ls -al; mkdir ../access-art && mv * ../access-art/. && mv ../access-art/* .; aws s3 sync . s3://$BUCKET --delete 
+
